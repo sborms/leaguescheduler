@@ -7,8 +7,6 @@ from leaguescheduler import InputParser, LeagueScheduler
 from leaguescheduler.constants import OUTPUT_COLS
 from leaguescheduler.utils import download_output, gather_stats, penalty_input
 
-# TODO: Make available online, and publish app
-
 st.set_page_config(page_title="League Scheduler", page_icon="⚽", layout="wide")
 
 st.title("League Scheduler")
