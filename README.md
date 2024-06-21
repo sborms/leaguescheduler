@@ -1,7 +1,7 @@
 # 2RR League Scheduler
 
 ![Python 3.10.9](https://img.shields.io/badge/python-3.10.9-blue.svg)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/alexanderdebeir/league-scheduler/main/app.py)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app/)
 
 This repository implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently.
 
@@ -18,7 +18,7 @@ If you are looking to schedule a sports league with at least the following const
 
 ## Input
 
-The Excel file `example_input.xlsx` contains an example of the input data. It should, in the exact format as in the example, include the reserved dates (together with location and time) and unavailable dates of all teams from a single league.
+The Excel file `example_input.xlsx` contains an example of the input data. The input should always, in the exact format as in the example, include the reserved dates (together with location and time) and unavailable dates of all teams from a single league.
 
 One sheet corresponds to one league. 
 
@@ -60,9 +60,9 @@ Type `help(LeagueScheduler)` to show the documentation.
 
 ### Web application
 
-The league scheduler is also made available through a Streamlit application. It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. Additionally, the output file has an overview by team of the distribution of the number of rest days between games.
+The league scheduler is also made available through a [Streamlit application](https://leaguescheduler.streamlit.app/). It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. Additionally, the output file has an overview by team of the distribution of the number of rest days between games.
 
-Running through 1000 iterations takes 1 to 2 minutes for a league with approx. 13 teams.
+Running through 1000 iterations can take up to 1-2 minutes for a league with approx. 13 teams.
 
 If the app happens to be sleeping due to inactivity, feel free to wake it back up.
 

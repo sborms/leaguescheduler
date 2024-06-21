@@ -21,7 +21,7 @@ with main_col1:
     st.markdown("Input file")
 
     file = st.file_uploader(
-        "Upload your input file with one league per sheet (use **NIET** for unavailability).",
+        "Upload one league input per sheet (use **NIET** for unavailability).",
         type=["xlsx"],
     )
 
@@ -59,7 +59,7 @@ with main_col2:
         value=1000,
     )
 
-main_col3.markdown("&nbsp;", unsafe_allow_html=True)
+main_col3.markdown("_Penalties_", unsafe_allow_html=True)
 p1 = penalty_input(main_col3, "0", 750)
 p2 = penalty_input(main_col3, "1", 500)
 p3 = penalty_input(main_col3, "2", 250)

@@ -31,7 +31,7 @@ def setup_logger(logfile: str) -> logging.Logger:
     logger.setLevel(logging.INFO)
 
     file_handler = logging.FileHandler(logfile)
-    file_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
+    file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%Y-%m-%d %H:%M:%S"))
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
@@ -79,7 +79,7 @@ def download_output(
 def penalty_input(col: st.columns, n: str, value: int) -> st.number_input:
     """Returns a penalty Streamlit input field for given column."""
     return col.number_input(
-        f"**Penalty {n} rest {'day' if n == 1 else 'days'}**",
+        f"**{n} rest {'day' if n == '1' else 'days'}**",
         min_value=0,
         max_value=1000,
         value=value,
