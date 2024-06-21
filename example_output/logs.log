@@ -1,0 +1,45 @@
+2024-06-21 10:27:00 - INFO - PROCESSING LEAGUE > LEAGUE A
+2024-06-21 10:27:00 - INFO - Input data read.
+2024-06-21 10:27:00 - INFO - Phase 1: Construction
+2024-06-21 10:27:00 - INFO - Initializing schedule for   0 - Thunderbolts
+2024-06-21 10:27:00 - INFO - Initializing schedule for   7 - Eagles
+2024-06-21 10:27:00 - INFO - Initializing schedule for   4 - Titans
+2024-06-21 10:27:00 - INFO - Initializing schedule for   9 - Sharks
+2024-06-21 10:27:00 - INFO - Initializing schedule for  10 - Wolves
+2024-06-21 10:27:00 - INFO - Initializing schedule for   1 - Hurricanes
+2024-06-21 10:27:00 - INFO - Initializing schedule for   2 - Stallions
+2024-06-21 10:27:00 - INFO - Initializing schedule for   6 - Raptors
+2024-06-21 10:27:00 - INFO - Initializing schedule for   8 - Lions
+2024-06-21 10:27:01 - INFO - Initializing schedule for  12 - Cobras
+2024-06-21 10:27:01 - INFO - Initializing schedule for   3 - Vipers
+2024-06-21 10:27:01 - INFO - Initializing schedule for   5 - Warriors
+2024-06-21 10:27:01 - INFO - Initializing schedule for  11 - Falcons
+2024-06-21 10:27:01 - INFO - Phase 2: Tabu & perturbation
+2024-06-21 10:27:01 - INFO - Tabu phase starts with cost 11.0
+2024-06-21 10:27:01 - INFO - New best at iteration 16 with cost 1.0
+2024-06-21 10:27:02 - INFO - New best at iteration 20 with cost 0.0
+2024-06-21 10:27:02 - INFO - Scheduling completed.
+2024-06-21 10:27:02 - INFO - Calendar stored.
+2024-06-21 10:27:02 - INFO - Validation info gathered.
+2024-06-21 10:27:02 - INFO - PROCESSING LEAGUE > LEAGUE B
+2024-06-21 10:27:03 - INFO - Input data read.
+2024-06-21 10:27:03 - INFO - Phase 1: Construction
+2024-06-21 10:27:03 - INFO - Initializing schedule for   2 - Hawks
+2024-06-21 10:27:03 - INFO - Initializing schedule for  11 - Cheetahs
+2024-06-21 10:27:03 - INFO - Initializing schedule for   0 - Panthers
+2024-06-21 10:27:03 - INFO - Initializing schedule for   1 - Tigers
+2024-06-21 10:27:03 - INFO - Initializing schedule for   5 - Bulls
+2024-06-21 10:27:03 - INFO - Initializing schedule for  10 - Buffalos
+2024-06-21 10:27:03 - INFO - Initializing schedule for   8 - Pumas
+2024-06-21 10:27:03 - INFO - Initializing schedule for   6 - Pythons
+2024-06-21 10:27:03 - INFO - Initializing schedule for   9 - Grizzlies
+2024-06-21 10:27:03 - INFO - Initializing schedule for   3 - Scorpions
+2024-06-21 10:27:03 - INFO - Initializing schedule for   4 - Rhinos
+2024-06-21 10:27:03 - INFO - Initializing schedule for   7 - Jaguars
+2024-06-21 10:27:03 - INFO - Initializing schedule for  12 - Leopards
+2024-06-21 10:27:03 - INFO - Phase 2: Tabu & perturbation
+2024-06-21 10:27:03 - INFO - Tabu phase starts with cost 2.0
+2024-06-21 10:27:05 - INFO - Perturbating schedule at iteration 50
+2024-06-21 10:27:07 - INFO - Scheduling completed.
+2024-06-21 10:27:07 - INFO - Calendar stored.
+2024-06-21 10:27:07 - INFO - Validation info gathered.
