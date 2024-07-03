@@ -12,7 +12,7 @@ class TransportationProblemSolver:
         self,
         sets_home: dict,
         sets_forbidden: dict,
-        m: int = 30,
+        m: int = 14,
         P: int = 5000,
         R_max: int = 4,
         penalties: dict = {1: 10, 2: 3, 3: 1},
@@ -38,7 +38,7 @@ class TransportationProblemSolver:
 
     def solve(self, X: np.ndarray, team_idx: int) -> tuple[list, int]:
         """
-        Solves transportation problem for given home team and set of home slots.
+        Solves transportation problem for given home team (= row) and set of home slots.
         Returns updated X along with cost from adjacency matrix and picked indexes.
         """
         set_home = self.sets_home[team_idx]

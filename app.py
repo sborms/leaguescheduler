@@ -42,7 +42,7 @@ with main_col2:
         "**Min. days between pairs of games**",
         min_value=0,
         max_value=100,
-        value=30,
+        value=14,
     )
     R_max = st.number_input(
         "**Min. slots for >1 game of same team**",
@@ -53,7 +53,7 @@ with main_col2:
     n_iterations = st.number_input(
         "**Max. number of iterations**",
         min_value=10,
-        max_value=2000,
+        max_value=50000,
         value=1000,
     )
 

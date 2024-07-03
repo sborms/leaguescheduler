@@ -16,7 +16,7 @@ from leaguescheduler.utils import gather_stats, setup_logger
 @click.option("--tabu_length", default=4, type=int, help="Number of iterations during which a team cannot be selected.")
 @click.option("--perturbation_length", default=50, type=int, help="Check perturbation need every this many iterations.")
 @click.option("--n_iterations", default=1500, type=int, help="Number of tabu phase iterations.")
-@click.option("--m", default=30, type=int, help="Minimum number of time slots between 2 games with same pair of teams.")
+@click.option("--m", default=14, type=int, help="Minimum number of time slots between 2 games with same pair of teams.")
 @click.option("--p", default=5000, type=int, help="Cost from dummy supply node q to non-dummy demand node.")  # P
 @click.option("--r_max", default=4, type=int, help="Ideal minimum time slots for 2 games of same team.")  # R_max
 @click.option("--penalties", default={1: 10, 2: 3, 3: 1}, type=dict, help="Dictionary as {n_days: penalty} where n_days ~ rest days + 1.")
@@ -56,7 +56,7 @@ def main(
 
         input.read(sheet_name=sheet_name)
         input.parse()
-        logger.info("Input data read.")
+        logger.info("Read and parsed input data")
 
         scheduler = LeagueScheduler(
             input=input,
@@ -77,15 +77,18 @@ def main(
 
         logger.info("Phase 2: Tabu & perturbation")
         scheduler.tabu_phase()
-        logger.info("Scheduling completed.")
+        logger.info("Completed scheduling")
+
+        scheduler.plot_minimum_costs(f"{output_folder}/{sheet_name}.png")
+        logger.info("Stored running minimum cost plot")
 
         df = scheduler.create_calendar()
         scheduler.store_calendar(df, file=f"{output_folder}/{sheet_name}.xlsx")
-        logger.info("Calendar stored.")
+        logger.info("Stored calendar")
 
         d_val = scheduler.validate(df)
         d_stats = gather_stats(d_val, d_stats)
-        logger.info("Validation info gathered.")
+        logger.info("Gathered validation info")
 
     df_stats = pd.DataFrame(d_stats, index=input.sheet_names)
     df_stats.to_excel(f"{output_folder}/stats.xlsx")
