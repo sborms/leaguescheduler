@@ -23,6 +23,8 @@ from leaguescheduler.utils import gather_stats, setup_logger
 @click.option("--alpha", default=0.50, type=float, help="Picks perturbation operator 1 with probability alpha.")
 @click.option("--beta", default=0.01, type=float, help="Probability of removing a game in operator 1.")
 @click.option("--unavailable", default="NIET", type=str, help="Cell value to indicate that a team is unavailable.")
+@click.option("--clip_bot", default=2, type=int, help="Value for clipping rest days plot on low end.")  # clips[0]
+@click.option("--clip_top", default=20, type=int, help="Value for clipping rest days plot on high end.")  # clips[1]
 # fmt: on
 def main(
     seed,
@@ -38,6 +40,8 @@ def main(
     alpha,
     beta,
     unavailable,
+    clip_bot,
+    clip_top,
 ):
     if seed is not None:
         np.random.seed(seed)
@@ -94,7 +98,7 @@ def main(
 
         scheduler.plot_rest_days(
             series=d_val["df_rest_days"].loc["TOTAL"],
-            clips=(2, 20),
+            clips=(clip_bot, clip_top),
             title_suffix=sheet_name,
             path=f"{output_folder}/{sheet_name}_rest_days.png",
         )
