@@ -92,7 +92,7 @@ def main(
         scheduler.store_calendar(df, file=f"{output_folder}/{sheet_name}.xlsx")
         logger.info("Stored calendar")
 
-        d_val = scheduler.validate(df)
+        d_val = scheduler.validate_calendar(df)
         d_stats = gather_stats(d_val, d_stats)
         logger.info("Gathered validation info")
 

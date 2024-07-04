@@ -130,7 +130,7 @@ with output_col1:
                 df = scheduler.create_calendar()
 
                 # compute validation statistics
-                d_val = scheduler.validate(df)
+                d_val = scheduler.validate_calendar(df)
                 d_stats = gather_stats(d_val, d_stats)
 
                 # store output
