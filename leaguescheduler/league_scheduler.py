@@ -190,6 +190,11 @@ class LeagueScheduler:
         cost2 = sum(list_home_costs2)
         self.logger.info(f"Initialized schedule using method 2 with cost {cost2}")
 
+        # NOTE: Home costs don't take into account later assigned games but the tabu
+        # phase will account for it - however there is a slight risk that a new best
+        # between the downward biased starting point and the actual cost is missed;
+        # there is always a slight delay between the actual cost and the reported cost
+
         # pick best method to set schedule after construction phase
         if cost1 < cost2:
             self.logger.info(f"Initialization method 1 is best")
@@ -275,8 +280,13 @@ class LeagueScheduler:
         if progress_bar is not None:
             progress_bar.progress(1.0)
 
-    def plot_minimum_costs(self, path: str = None) -> None:
-        """Plots evolution of running minimum cost during tabu phase."""
+    def plot_minimum_costs(self, title_suffix: str = "", path: str = None) -> None:
+        """
+        Plots evolution of running minimum cost during tabu phase.
+
+        :param title_suffix: Suffix to add to the title of the plot.
+        :param path: Path to save the plot as an image (if not None).
+        """
         if not hasattr(self, "list_full_costs"):
             self.logger.warning(
                 "No costs available for plotting, run self.tabu_phase() first"
@@ -288,9 +298,11 @@ class LeagueScheduler:
         ]
 
         # create plot
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(10, 6))
         plt.plot(list_running_minimum_cost)
-        plt.title("Evolution minimum cost")
+        plt.title(
+            f"Evolution minimum cost{(' - ' + title_suffix) if title_suffix else ''}"
+        )
         plt.xlabel("Iteration")
         plt.tight_layout()
 
@@ -299,6 +311,66 @@ class LeagueScheduler:
             plt.show()
         else:
             plt.savefig(path)
+
+        plt.close()
+
+    def plot_rest_days(
+        self,
+        series: pd.Series,
+        clips: tuple = (3, 20),
+        title_suffix: str = "",
+        path: str = None,
+    ) -> None:
+        """
+        Plots distribution of rest days between games.
+
+        :param series: Series with number of rest days as index.
+        :param clips: Tuple with lower and upper bound for clipping the series.
+        :param title_suffix: Suffix to add to the title of the plot.
+        :param path: Path to save the plot as an image (if not None).
+        """
+        series_ = series.copy()
+
+        # clip series to a lower and upper bound
+        if clips:
+            l, b = clips
+            l_name, b_name = f"<={l}", f">={b}"
+
+            series_.index = series_.index.astype(int)
+
+            bot = series_[series_.index <= l].sum()
+            top = series_[series_.index >= b].sum()
+
+            series_ = series_[(series_.index > l) & (series_.index < b)]
+            series_.loc[l], series_.loc[b] = bot, top
+
+            series_.rename(index={l: l_name, b: b_name}, inplace=True)
+
+            index_no_lb = [idx for idx in series_.index if idx not in [l_name, b_name]]
+            series_ = series_.reindex([l_name] + index_no_lb + [b_name])
+
+            colors = [
+                "skyblue" if (idx != l_name and idx != b_name) else "orange"
+                for idx in series_.index
+            ]
+
+        # create plot
+        plt.figure(figsize=(10, 6))
+        series_.plot(kind="bar", color=colors if clips else "skyblue")
+        plt.title(
+            f"Distribution of rest days between games{(' - ' + title_suffix) if title_suffix else ''}"
+        )
+        plt.xlabel("Number of rest days")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # show or save plot
+        if path is None:
+            plt.show()
+        else:
+            plt.savefig(path)
+
+        plt.close()
 
     def create_calendar(self) -> pd.DataFrame:
         """Creates a calendar DataFrame from the optimal schedule."""

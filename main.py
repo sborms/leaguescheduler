@@ -79,7 +79,9 @@ def main(
         scheduler.tabu_phase()
         logger.info("Completed scheduling")
 
-        scheduler.plot_minimum_costs(f"{output_folder}/{sheet_name}.png")
+        scheduler.plot_minimum_costs(
+            title_suffix=sheet_name, path=f"{output_folder}/{sheet_name}_costs.png"
+        )
         logger.info("Stored running minimum cost plot")
 
         df = scheduler.create_calendar()
@@ -89,6 +91,14 @@ def main(
         d_val = scheduler.validate(df)
         d_stats = gather_stats(d_val, d_stats)
         logger.info("Gathered validation info")
+
+        scheduler.plot_rest_days(
+            series=d_val["df_rest_days"].loc["TOTAL"],
+            clips=(2, 20),
+            title_suffix=sheet_name,
+            path=f"{output_folder}/{sheet_name}_rest_days.png",
+        )
+        logger.info("Stored rest days plot")
 
     df_stats = pd.DataFrame(d_stats, index=input.sheet_names)
     df_stats.to_excel(f"{output_folder}/stats.xlsx")
