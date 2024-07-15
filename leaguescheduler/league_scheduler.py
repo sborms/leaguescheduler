@@ -18,8 +18,9 @@ from .transportation_problem_solver import TransportationProblemSolver as TPS
 # No away availabilities on home days
 # Some teams have home games on same day
 
-# TODO: What is impact of nbr. of iterations on optimality in terms of min. and max. rest days?
 # TODO: Give final and all needed output(s)
+# TODO: Remove 00:00:00 in final Excel output
+# TODO: Replace date of unscheduled games with "31/07/20xx 00u" (last day of competition) in final Excel output
 
 
 class Perturbation:
