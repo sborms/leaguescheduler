@@ -19,7 +19,7 @@ from .transportation_problem_solver import TransportationProblemSolver as TPS
 # Some teams have home games on same day
 
 # TODO: Give final and all needed output(s)
-# TODO: Remove 00:00:00 in final Excel output
+# TODO: Remove 00:00:00 from and use forward slashes in date in final Excel output
 # TODO: Replace date of unscheduled games with "31/07/20xx 00u" (last day of competition) in final Excel output
 
 
