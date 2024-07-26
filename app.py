@@ -54,7 +54,7 @@ with main_col2:
         "**Max. number of iterations**",
         min_value=10,
         max_value=50000,
-        value=1000,
+        value=3000,
     )
 
 main_col3.markdown("_Penalties_", unsafe_allow_html=True)

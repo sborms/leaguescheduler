@@ -21,7 +21,10 @@ from .transportation_problem_solver import TransportationProblemSolver as TPS
 # TODO: Give final and all needed output(s)
 # TODO: Remove 00:00:00 from and use forward slashes in date in final Excel output
 # TODO: Replace date of unscheduled games with "31/07/20xx 00u" (last day of competition) in final Excel output
-
+# TODO: Clarify 'min. slots for >1 game' on frontend and in documentation
+# TODO: Don't count cost P in final cost if games are unscheduled because not feasible
+# TODO: Add same penalty for 3 days and >19 days
+# TODO: Change default values for penalties
 
 class Perturbation:
     """Helper class to modify current schedule to avoid local optima."""
@@ -92,7 +95,7 @@ class LeagueScheduler:
         input: InputParser,
         tabu_length: int = 4,
         perturbation_length: int = 50,
-        n_iterations: int = 1500,
+        n_iterations: int = 3000,
         m: int = 14,
         P: int = 5000,
         R_max: int = 4,
