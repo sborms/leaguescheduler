@@ -24,7 +24,7 @@ class TransportationProblemSolver:
         :param sets_forbidden: Dictionary with all forbidden slots by team.
         :param m: Minimum number of time slots between 2 games with same pair of teams.
         :param P: Cost from dummy supply node q to non-dummy demand node.
-        :param R_max: Ideal minimum time slots for 2 games of same team.
+        :param R_max: Minimum required time slots for 2 games of same team.
         :param penalties: Dictionary as {n_days: penalty} where n_days ~ rest days + 1
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t.

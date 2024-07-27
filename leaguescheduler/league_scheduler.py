@@ -18,13 +18,9 @@ from .transportation_problem_solver import TransportationProblemSolver as TPS
 # No away availabilities on home days
 # Some teams have home games on same day
 
-# TODO: Give final and all needed output(s)
-# TODO: Remove 00:00:00 from and use forward slashes in date in final Excel output
-# TODO: Replace date of unscheduled games with "31/07/20xx 00u" (last day of competition) in final Excel output
-# TODO: Clarify 'min. slots for >1 game' on frontend and in documentation
+# TODO: Give final and all needed output(s) incl. separate sheets for unscheduled games per team
 # TODO: Don't count cost P in final cost if games are unscheduled because not feasible
-# TODO: Add same penalty for 3 days and >19 days
-# TODO: Change default values for penalties
+
 
 class Perturbation:
     """Helper class to modify current schedule to avoid local optima."""
@@ -95,7 +91,7 @@ class LeagueScheduler:
         input: InputParser,
         tabu_length: int = 4,
         perturbation_length: int = 50,
-        n_iterations: int = 3000,
+        n_iterations: int = 1000,
         m: int = 14,
         P: int = 5000,
         R_max: int = 4,
@@ -113,7 +109,7 @@ class LeagueScheduler:
         :param n_iterations: Number of tabu phase iterations.
         :param m: Minimum number of time slots between 2 games with same pair of teams.
         :param P: Cost from dummy supply node q to non-dummy demand node.
-        :param R_max: Ideal minimum time slots for 2 games of same team.
+        :param R_max: Minimum required time slots for 2 games of same team.
         :param penalties: Dictionary as {n_days: penalty} where n_days ~ rest days + 1
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t.
