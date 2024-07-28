@@ -67,7 +67,7 @@ def gather_stats(d_val: dict, d_stats: dict = None) -> dict:
 
 
 def download_output(
-    output_sch: dict, output_val: dict, df_stats: pd.DataFrame
+    output_sch: dict, output_val: dict, output_unu: dict, df_stats: pd.DataFrame
 ) -> io.BytesIO:
     """Writes outputs to Excel file without storing it locally."""
     file = io.BytesIO()
@@ -76,6 +76,7 @@ def download_output(
         for sheet in output_sch.keys():  # assumes keys of inputs match
             output_sch[sheet].to_excel(writer, sheet_name=sheet, index=False)
             output_val[sheet].to_excel(writer, sheet_name=f"{sheet}_rest", index=True)
+            output_unu[sheet].to_excel(writer, sheet_name=f"{sheet}_unused", index=True)
     file.seek(0)
     return file
 

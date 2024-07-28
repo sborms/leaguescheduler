@@ -18,9 +18,6 @@ from .transportation_problem_solver import TransportationProblemSolver as TPS
 # No away availabilities on home days
 # Some teams have home games on same day
 
-# TODO: Give final and all needed output(s) incl. separate sheets for unscheduled games per team
-# TODO: Don't count cost P in final cost if games are unscheduled because not feasible
-
 
 class Perturbation:
     """Helper class to modify current schedule to avoid local optima."""
@@ -412,6 +409,8 @@ class LeagueScheduler:
 
     def make_df_unused_home_slots(self) -> pd.DataFrame:
         """Forms DataFrame with teams and their unused home slots."""
+        col_team = "Team"
+
         list_unused = []
         for team_idx, team_name in self.input.sets["teams"].items():
             unused_home_slots = sorted(
@@ -426,12 +425,12 @@ class LeagueScheduler:
             df_unused = pd.DataFrame({"unused": unused_home_slots})
             if len(df_unused) == 0:
                 continue
-            df_unused["team"] = team_name
+            df_unused[col_team] = team_name
             list_unused.append(df_unused)
 
-        df_unused_all = pd.concat(list_unused)[["team", "unused"]].reset_index(
-            drop=True
-        )
+        df_unused_all = pd.concat(list_unused)[[col_team, "unused"]].set_index(col_team)
+        df_unused_all["unused"] = df_unused_all["unused"].dt.strftime("%d/%m/%Y")
+        df_unused_all.rename(columns={"unused": self.output_cols[0]}, inplace=True)
 
         return df_unused_all
 

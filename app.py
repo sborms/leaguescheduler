@@ -7,8 +7,7 @@ from leaguescheduler import InputParser, LeagueScheduler
 from leaguescheduler.constants import OUTPUT_COLS
 from leaguescheduler.utils import download_output, gather_stats, penalty_input
 
-UNSCHEDULED_DATE = "31/07/{year}"
-UNSCHEDULED_HOUR = "00u"
+P = 5000
 
 st.set_page_config(page_title="League Scheduler", page_icon="⚽", layout="wide")
 
@@ -19,10 +18,10 @@ row1 = st.container()
 main_col1, main_col2, main_col3, main_col4, main_col5 = row1.columns([3, 2, 1, 1, 1])
 
 with main_col1:
-    st.markdown("Input file")
+    st.markdown("**Input file**")
 
     file = st.file_uploader(
-        "Upload one league input per sheet (use **NIET** for unavailability).",
+        "Upload one league input per sheet (use **NIET** for unavailability)",
         type=["xlsx"],
     )
 
@@ -39,7 +38,7 @@ with main_col1:
             selected_sheets.append(sheet_name)
 
 with main_col2:
-    st.markdown("Parameters")
+    st.markdown("**Parameters**")
 
     m = st.number_input(
         "**Min. days between pairs of games**",
@@ -48,7 +47,7 @@ with main_col2:
         value=7,
     )
     R_max = st.number_input(
-        "**Min. slots for 2 games of same team**",
+        "**Required days for 2 games of same team**",
         min_value=1,
         max_value=20,
         value=10,
@@ -60,7 +59,18 @@ with main_col2:
         value=5000,
     )
 
-main_col3.markdown("_Penalties_", unsafe_allow_html=True)
+    main_col2_sub_col1, main_col2_sub_col2 = main_col2.columns([1, 1])
+    unscheduled_date = main_col2_sub_col1.text_input(
+        "**Unscheduled date**",
+        value="31/07/2024",
+    )
+
+    unscheduled_hour = main_col2_sub_col2.text_input(
+        "**Unscheduled hour**",
+        value="00u",
+    )
+
+main_col3.markdown("**Penalties**", unsafe_allow_html=True)
 p1 = penalty_input(main_col3, "0", 1000)
 p2 = penalty_input(main_col3, "1", 400)
 p3 = penalty_input(main_col3, "2", 160)
@@ -77,13 +87,13 @@ p9 = penalty_input(main_col5, "8 & 14", 1)
 
 st.markdown("---")
 
-output_col1, output_col2 = st.columns(2)
+output_col1, output_col2 = st.columns([2, 3])
 
 with output_col1:
     go = st.button("Schedule")
 
     # perform scheduling
-    output_sch, output_val = {}, {}
+    output_sch, output_val, output_unu = {}, {}, {}
     if go:
         if file is None:
             st.markdown("Upload a file first!")
@@ -122,7 +132,7 @@ with output_col1:
 
                 scheduler = LeagueScheduler(
                     input,
-                    P=5000,
+                    P=P,
                     n_iterations=n_iterations,
                     m=m,
                     R_max=R_max,
@@ -143,20 +153,18 @@ with output_col1:
 
                 # store calendar output
                 df_out = df[OUTPUT_COLS].copy()
-                max_year = int(
-                    df_out[OUTPUT_COLS[0]].dt.year.max()
-                )  # TODO: Make this more general?
                 df_out[OUTPUT_COLS[0]] = df_out[OUTPUT_COLS[0]].dt.strftime("%d/%m/%Y")
                 mask_unscheduled = df_out[OUTPUT_COLS[0]].isna()
-                df_out.loc[mask_unscheduled, OUTPUT_COLS[0]] = UNSCHEDULED_DATE.format(
-                    year=max_year
-                )
-                df_out.loc[mask_unscheduled, OUTPUT_COLS[1]] = UNSCHEDULED_HOUR
+                df_out.loc[mask_unscheduled, OUTPUT_COLS[0]] = unscheduled_date
+                df_out.loc[mask_unscheduled, OUTPUT_COLS[1]] = unscheduled_hour
                 df_out.reset_index(drop=True, inplace=True)
                 output_sch[sheet_name] = df_out
 
                 # store rest days output
                 output_val[sheet_name] = d_val["df_rest_days"]
+
+                # store unused home slots output
+                output_unu[sheet_name] = d_val["df_unused_home_slots"]
 
         elapsed_time = time() - start_time
         st.markdown(f"**Done!** Took {int(elapsed_time)} seconds.")
@@ -166,20 +174,20 @@ with output_col2:
         df_stats = pd.DataFrame(d_stats, index=selected_sheets)
         df_stats = df_stats.astype(int)
 
-        # download output file with schedules
+        # remove cost of unfeasible schedules
+        df_stats["cost"] = df_stats["cost"] - (df_stats["missing_home_slots"] * P)
+
+        # download output file with schedules and additional info
         st.download_button(
             label="Download",
-            data=download_output(output_sch, output_val, df_stats),
+            data=download_output(output_sch, output_val, output_unu, df_stats),
             file_name="schedules.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
         st.markdown("**Summary**")
-        st.dataframe(df_stats, use_container_width=True)
+        st.table(df_stats)
 
-        st.markdown(
-            f"Unscheduled games are marked with **{UNSCHEDULED_DATE.format(year=max_year)} {UNSCHEDULED_HOUR}**."
-        )
         st.markdown(
             "_Once you download the schedules, the output here will disappear._"
         )
