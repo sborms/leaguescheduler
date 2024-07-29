@@ -1,3 +1,4 @@
+import json
 import os
 
 import click
@@ -10,7 +11,8 @@ from leaguescheduler.utils import gather_stats, setup_logger
 
 # fmt: off
 @click.command()
-@click.option("--file", help="Input Excel file with for every team their (in)availability data.")
+@click.option("--config_file", default=None, help="Path to a configuration JSON file with (part of) the arguments.")
+@click.option("--input_file", help="Input Excel file with for every team their (in)availability data.")
 @click.option("--output_folder", help="Folder where the outputs (logs, overview, schedules) will be stored.")
 @click.option("--seed", default=None, type=int, help="Optional seed for np.random.seed().")
 @click.option("--tabu_length", default=4, type=int, help="Number of iterations during which a team cannot be selected.")
@@ -25,24 +27,45 @@ from leaguescheduler.utils import gather_stats, setup_logger
 @click.option("--unavailable", default="NIET", type=str, help="Cell value to indicate that a team is unavailable.")
 @click.option("--clip_bot", default=2, type=int, help="Value for clipping rest days plot on low end.")  # clips[0]
 @click.option("--clip_top", default=20, type=int, help="Value for clipping rest days plot on high end.")  # clips[1]
+@click.pass_context
 # fmt: on
-def main(
-    seed,
-    file,
-    output_folder,
-    tabu_length,
-    perturbation_length,
-    n_iterations,
-    m,
-    p,
-    r_max,
-    penalties,
-    alpha,
-    beta,
-    unavailable,
-    clip_bot,
-    clip_top,
-):
+def main(ctx, config_file, **kwargs):
+    ############ start: argument parsing ############
+    if config_file is not None:
+        with open(config_file, "r") as c_file:
+            config = json.load(c_file)
+
+    # use command-line argument if provided, else use config value or default
+    def get_value(key, default=None):
+        if (
+            config_file is None
+            or ctx.get_parameter_source(key) == click.core.ParameterSource.COMMANDLINE
+        ):
+            return kwargs[key]  # command-line argument or click default
+        else:
+            return config.get(key, default)  # config value or default
+
+    input_file = get_value("input_file")
+    output_folder = get_value("output_folder")
+    seed = get_value("seed")
+    tabu_length = get_value("tabu_length", 4)
+    perturbation_length = get_value("perturbation_length", 50)
+    n_iterations = get_value("n_iterations", 1000)
+    m = get_value("m", 14)
+    p = get_value("p", 5000)
+    r_max = get_value("r_max", 4)
+    penalties = get_value("penalties", {1: 10, 2: 3, 3: 1})
+    alpha = get_value("alpha", 0.50)
+    beta = get_value("beta", 0.01)
+    unavailable = get_value("unavailable", "NIET")
+    clip_bot = get_value("clip_bot", 2)
+    clip_top = get_value("clip_top", 20)
+
+    # ensure keys of penalties are integers
+    if penalties:
+        penalties = {int(k): v for k, v in penalties.items()}
+    ############ end: argument parsing ############
+
     if seed is not None:
         np.random.seed(seed)
 
@@ -52,8 +75,13 @@ def main(
 
     logger = setup_logger(logfile=f"{output_folder}/logs.log")
 
+    logger.info("Overview of input arguments:")
+    for key, value in locals().items():
+        if key not in ["ctx", "config_file", "kwargs", "get_value", "logger"]:
+            logger.info(f" --> {key} = {value}")
+
     d_stats = None
-    input = InputParser(file, unavailable=unavailable)
+    input = InputParser(input_file, unavailable=unavailable)
 
     for sheet_name in input.sheet_names:
         logger.info(f"PROCESSING LEAGUE > {sheet_name}")

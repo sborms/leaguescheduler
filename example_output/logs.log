@@ -1,30 +1,46 @@
-2024-07-04 20:12:55 - INFO - PROCESSING LEAGUE > LEAGUE A
-2024-07-04 20:12:56 - INFO - Read and parsed input data
-2024-07-04 20:12:56 - INFO - Phase 1: Construction
-2024-07-04 20:12:56 - INFO - Initialized schedule using method 1 with cost 10.0
-2024-07-04 20:12:58 - INFO - Initialized schedule using method 2 with cost 5.0
-2024-07-04 20:12:58 - INFO - Initialization method 2 is best
-2024-07-04 20:12:58 - INFO - Phase 2: Tabu & perturbation
-2024-07-04 20:12:58 - INFO - Tabu phase starts with cost 5.0
-2024-07-04 20:12:58 - INFO - New best at iteration 21 with cost 1.0
-2024-07-04 20:12:58 - INFO - New best at iteration 24 with cost 0.0
-2024-07-04 20:12:58 - INFO - Completed scheduling
-2024-07-04 20:12:59 - INFO - Stored running minimum cost plot
-2024-07-04 20:12:59 - INFO - Stored calendar
-2024-07-04 20:12:59 - INFO - Gathered validation info
-2024-07-04 20:13:00 - INFO - Stored rest days plot
-2024-07-04 20:13:00 - INFO - PROCESSING LEAGUE > LEAGUE B
-2024-07-04 20:13:00 - INFO - Read and parsed input data
-2024-07-04 20:13:00 - INFO - Phase 1: Construction
-2024-07-04 20:13:01 - INFO - Initialized schedule using method 1 with cost 2.0
-2024-07-04 20:13:03 - INFO - Initialized schedule using method 2 with cost 5.0
-2024-07-04 20:13:03 - INFO - Initialization method 1 is best
-2024-07-04 20:13:03 - INFO - Phase 2: Tabu & perturbation
-2024-07-04 20:13:03 - INFO - Tabu phase starts with cost 2.0
-2024-07-04 20:13:03 - INFO - New best at iteration 13 with cost 1.0
-2024-07-04 20:13:04 - INFO - Perturbating schedule at iteration 50
-2024-07-04 20:13:05 - INFO - Completed scheduling
-2024-07-04 20:13:05 - INFO - Stored running minimum cost plot
-2024-07-04 20:13:05 - INFO - Stored calendar
-2024-07-04 20:13:05 - INFO - Gathered validation info
-2024-07-04 20:13:06 - INFO - Stored rest days plot
+2024-07-29 18:58:55 - INFO - Overview of input arguments:
+2024-07-29 18:58:55 - INFO -  --> input_file = example_input.xlsx
+2024-07-29 18:58:55 - INFO -  --> output_folder = example_output
+2024-07-29 18:58:55 - INFO -  --> seed = 505
+2024-07-29 18:58:55 - INFO -  --> tabu_length = 4
+2024-07-29 18:58:55 - INFO -  --> perturbation_length = 50
+2024-07-29 18:58:55 - INFO -  --> n_iterations = 100
+2024-07-29 18:58:55 - INFO -  --> m = 14
+2024-07-29 18:58:55 - INFO -  --> p = 5000
+2024-07-29 18:58:55 - INFO -  --> r_max = 4
+2024-07-29 18:58:55 - INFO -  --> penalties = {1: 10, 2: 3, 3: 1}
+2024-07-29 18:58:55 - INFO -  --> alpha = 0.5
+2024-07-29 18:58:55 - INFO -  --> beta = 0.01
+2024-07-29 18:58:55 - INFO -  --> unavailable = NIET
+2024-07-29 18:58:55 - INFO -  --> clip_bot = 2
+2024-07-29 18:58:55 - INFO -  --> clip_top = 20
+2024-07-29 18:58:55 - INFO - PROCESSING LEAGUE > LEAGUE A
+2024-07-29 18:58:55 - INFO - Read and parsed input data
+2024-07-29 18:58:55 - INFO - Phase 1: Construction
+2024-07-29 18:58:55 - INFO - Initialized schedule using method 1 with cost 10.0
+2024-07-29 18:58:56 - INFO - Initialized schedule using method 2 with cost 5.0
+2024-07-29 18:58:56 - INFO - Initialization method 2 is best
+2024-07-29 18:58:56 - INFO - Phase 2: Tabu & perturbation
+2024-07-29 18:58:56 - INFO - Tabu phase starts with cost 5.0
+2024-07-29 18:58:56 - INFO - New best at iteration 21 with cost 1.0
+2024-07-29 18:58:56 - INFO - New best at iteration 24 with cost 0.0
+2024-07-29 18:58:56 - INFO - Completed scheduling
+2024-07-29 18:58:56 - INFO - Stored running minimum cost plot
+2024-07-29 18:58:56 - INFO - Stored calendar
+2024-07-29 18:58:56 - INFO - Gathered validation info
+2024-07-29 18:58:57 - INFO - Stored rest days plot
+2024-07-29 18:58:57 - INFO - PROCESSING LEAGUE > LEAGUE B
+2024-07-29 18:58:57 - INFO - Read and parsed input data
+2024-07-29 18:58:57 - INFO - Phase 1: Construction
+2024-07-29 18:58:57 - INFO - Initialized schedule using method 1 with cost 2.0
+2024-07-29 18:58:58 - INFO - Initialized schedule using method 2 with cost 5.0
+2024-07-29 18:58:58 - INFO - Initialization method 1 is best
+2024-07-29 18:58:58 - INFO - Phase 2: Tabu & perturbation
+2024-07-29 18:58:58 - INFO - Tabu phase starts with cost 2.0
+2024-07-29 18:58:58 - INFO - New best at iteration 13 with cost 1.0
+2024-07-29 18:58:58 - INFO - Perturbating schedule at iteration 50
+2024-07-29 18:58:58 - INFO - Completed scheduling
+2024-07-29 18:58:59 - INFO - Stored running minimum cost plot
+2024-07-29 18:58:59 - INFO - Stored calendar
+2024-07-29 18:58:59 - INFO - Gathered validation info
+2024-07-29 18:58:59 - INFO - Stored rest days plot

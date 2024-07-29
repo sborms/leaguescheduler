@@ -96,6 +96,7 @@ class TransportationProblemSolver:
             games_team = np.concatenate((X[team_idx, :], X[:, team_idx]))
             games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
 
+            # fmt: off
             for i, h in enumerate(set_home):  # C2
                 games_team_w = abs(games_team - h)
                 games_oppo_w = abs(games_oppo - h)
@@ -103,11 +104,14 @@ class TransportationProblemSolver:
                 # forbidden game set
                 if h in self.sets_forbidden[oppo_idx]:  # C3
                     am_cost[i, j] = DISALLOWED_NBR
-                # team already plays away game or >1 (away) game within 'R_max' slots
-                elif h in games_team or sum(games_team_w < self.R_max) > 1:  # C4, C5
+                # team already plays away game
+                elif h in games_team:  # C4
                     am_cost[i, j] = DISALLOWED_NBR
-                # opponent already plays home/away game or >1 game within 'R_max' slots
-                elif h in games_oppo or sum(games_oppo_w < self.R_max) > 1:  # C4, C5
+                # opponent already plays home/away game
+                elif h in games_oppo:  # C4
+                    am_cost[i, j] = DISALLOWED_NBR
+                # already 2 (aka >1) games within 'R_max' slots (e.g. 7 allows >1 game between dates 01 -> 07)
+                elif sum(games_team_w < self.R_max) > 1 or sum(games_oppo_w < self.R_max) > 1:  # C5
                     am_cost[i, j] = DISALLOWED_NBR
                 # game i-j is within m days of game j-i
                 elif abs(h - X[oppo_idx, team_idx]) < self.m:  # C6
@@ -119,6 +123,7 @@ class TransportationProblemSolver:
                 # add penalties for game within given number of time slots, zero if not
                 am_cost[i, j] += self.penalties.get(np.nanmin(games_team_w), 0)
                 am_cost[i, j] += self.penalties.get(np.nanmin(games_oppo_w), 0)
+            # fmt: on
 
         return am_cost
 

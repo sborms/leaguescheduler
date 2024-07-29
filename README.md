@@ -1,6 +1,6 @@
 # 2RR League Scheduler
 
-![Python 3.10.9](https://img.shields.io/badge/python-3.10.9-blue.svg)
+![Python 3.11.9](https://img.shields.io/badge/python-3.11.9-blue.svg)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app/)
 
 This repository implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently.
@@ -40,7 +40,7 @@ Once installed, you can use the scheduler from the command line as follows:
 
 ```bash
 2rr \
---file "example_input.xlsx" \
+--input_file "example_input.xlsx" \
 --output_folder "example_output" \
 --seed 505 \
 --n_iterations 100
@@ -48,7 +48,7 @@ Once installed, you can use the scheduler from the command line as follows:
 
 Alternatively, you can execute `make 2rr` which runs the above example.
 
-See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments.
+See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments. You can also specify a `.json` configuration file and use that as (only) CLI input.
 
 To more freely play around, you can also import the core classes in your own Python script or notebook:
 
