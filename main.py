@@ -32,8 +32,8 @@ from leaguescheduler.utils import gather_stats, setup_logger
 def main(ctx, config_file, **kwargs):
     ############ start: argument parsing ############
     if config_file is not None:
-        with open(config_file, "r") as c_file:
-            config = json.load(c_file)
+        with open(config_file, "r") as f:
+            config = json.load(f)
 
     # use command-line argument if provided, else use config value or default
     def get_value(key, default=None):
@@ -76,8 +76,17 @@ def main(ctx, config_file, **kwargs):
     logger = setup_logger(logfile=f"{output_folder}/logs.log")
 
     logger.info("Overview of input arguments:")
+    print(locals().keys())
     for key, value in locals().items():
-        if key not in ["ctx", "config_file", "kwargs", "get_value", "logger"]:
+        if key not in [
+            "ctx",
+            "config_file",
+            "kwargs",
+            "f",
+            "config",
+            "get_value",
+            "logger",
+        ]:
             logger.info(f" --> {key} = {value}")
 
     d_stats = None
