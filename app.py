@@ -50,13 +50,13 @@ with main_col2:
         "**Required days for 2 games of same team**",
         min_value=1,
         max_value=20,
-        value=10,
+        value=5,
     )
     n_iterations = st.number_input(
         "**Max. number of iterations**",
         min_value=10,
         max_value=50000,
-        value=5000,
+        value=10000,
     )
 
     main_col2_sub_col1, main_col2_sub_col2 = main_col2.columns([1, 1])
