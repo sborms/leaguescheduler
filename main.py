@@ -76,7 +76,6 @@ def main(ctx, config_file, **kwargs):
     logger = setup_logger(logfile=f"{output_folder}/logs.log")
 
     logger.info("Overview of input arguments:")
-    print(locals().keys())
     for key, value in locals().items():
         if key not in [
             "ctx",
