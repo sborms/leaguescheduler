@@ -41,10 +41,10 @@ with main_col2:
     st.markdown("**Parameters**")
 
     m = st.number_input(
-        "**Min. days between pairs of games**",
+        "**Min. rest days between pairs of games**",
         min_value=0,
         max_value=100,
-        value=7,
+        value=6,
     )
     R_max = st.number_input(
         "**Required days for 2 games of same team**",
@@ -134,7 +134,7 @@ with output_col1:
                     input,
                     P=P,
                     n_iterations=n_iterations,
-                    m=m,
+                    m=m + 1,  # from rest days to time slots
                     R_max=R_max,
                     penalties=d_penalties,
                 )
