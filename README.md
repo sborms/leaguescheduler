@@ -1,7 +1,7 @@
 # 2RR League Scheduler
 
-![Python 3.11.9](https://img.shields.io/badge/python-3.11.9-blue.svg)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app/)
+![Python 3.10.10](https://img.shields.io/badge/python-3.10.10-blue.svg)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app)
 
 This repository implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently.
 
