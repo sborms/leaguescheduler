@@ -72,7 +72,7 @@ with main_col2:
 
 main_col3.markdown("**Penalties**", unsafe_allow_html=True)
 p1 = penalty_input(main_col3, "0", 1000)
-p2 = penalty_input(main_col3, "1 & >=29 ", 400)
+p2 = penalty_input(main_col3, "1 & >=29", 400)
 p3 = penalty_input(main_col3, "2 & 23-28", 160)
 
 main_col4.markdown("&nbsp;", unsafe_allow_html=True)
