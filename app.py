@@ -72,11 +72,11 @@ with main_col2:
 
 main_col3.markdown("**Penalties**", unsafe_allow_html=True)
 p1 = penalty_input(main_col3, "0", 1000)
-p2 = penalty_input(main_col3, "1", 400)
-p3 = penalty_input(main_col3, "2", 160)
+p2 = penalty_input(main_col3, "1 & >=29 ", 400)
+p3 = penalty_input(main_col3, "2 & 23-28", 160)
 
 main_col4.markdown("&nbsp;", unsafe_allow_html=True)
-p4 = penalty_input(main_col4, "3 & >=19", 64)
+p4 = penalty_input(main_col4, "3 & 19-22", 64)
 p5 = penalty_input(main_col4, "4 & 18", 26)
 p6 = penalty_input(main_col4, "5 & 17", 10)
 
@@ -103,12 +103,22 @@ with output_col1:
             d_stats = None
             input = InputParser(file)
 
-            # gather penalties incl. those for >=19 rest days (~ up to 50)
+            # gather penalties incl. those for >=29 rest days (~ up to 60)
             d_penalties = {
                 1: p1,
                 2: p2,
                 3: p3,
+                24: p3,
+                25: p3,
+                26: p3,
+                27: p3,
+                28: p3,
+                29: p3,
                 4: p4,
+                20: p4,
+                21: p4,
+                22: p4,
+                23: p4,
                 5: p5,
                 19: p5,
                 6: p6,
@@ -121,8 +131,8 @@ with output_col1:
                 15: p9,
             }
 
-            d_penalties_above_19 = {k: p4 for k in range(20, 51)}
-            d_penalties.update(d_penalties_above_19)
+            d_penalties_above_29 = {k: p2 for k in range(30, 61)}
+            d_penalties.update(d_penalties_above_29)
 
             for sheet_name in selected_sheets:
                 st.markdown(f"Scheduling league **{sheet_name}**")
