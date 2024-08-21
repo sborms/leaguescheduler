@@ -1,3 +1,4 @@
+from datetime import datetime
 from time import time
 
 import pandas as pd
@@ -62,7 +63,7 @@ with main_col2:
     main_col2_sub_col1, main_col2_sub_col2 = main_col2.columns([1, 1])
     unscheduled_date = main_col2_sub_col1.text_input(
         "**Unscheduled date**",
-        value="31/07/2024",
+        value="31/07/2025",
     )
 
     unscheduled_hour = main_col2_sub_col2.text_input(
@@ -191,7 +192,7 @@ with output_col2:
         st.download_button(
             label="Download",
             data=download_output(output_sch, output_val, output_unu, df_stats),
-            file_name="schedules.xlsx",
+            file_name=f"{'_'.join(selected_sheets)}_{datetime.now().strftime('%Y%m%d')}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
@@ -199,5 +200,5 @@ with output_col2:
         st.table(df_stats)
 
         st.markdown(
-            "_Once you download the schedules, the output here will disappear._"
+            "_Once you download the schedules, the shown output will disappear._"
         )
