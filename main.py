@@ -12,7 +12,7 @@ from leaguescheduler.utils import gather_stats, setup_logger
 # fmt: off
 @click.command()
 @click.option("--config_file", default=None, help="Path to a configuration JSON file with (part of) the arguments.")
-@click.option("--input_file", help="Input Excel file with for every team their (in)availability data and optionally a 'penalties' tab with two columns (rest day, penalty).")
+@click.option("--input_file", help="Input Excel file with for every team their (un)availability data and optionally a 'penalties' tab with two columns (rest day, penalty).")
 @click.option("--output_folder", help="Folder where the outputs (logs, overview, schedules) will be stored.")
 @click.option("--seed", default=None, type=int, help="Optional seed for np.random.seed().")
 @click.option("--tabu_length", default=4, type=int, help="Number of iterations during which a team cannot be selected.")

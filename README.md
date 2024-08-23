@@ -43,7 +43,7 @@ Once installed, you can use the scheduler from the command line as follows:
 --input_file "example_input.xlsx" \
 --output_folder "example_output" \
 --seed 505 \
---n_iterations 100
+--n_iterations 100 \
 --clip_top 40
 ```
 
