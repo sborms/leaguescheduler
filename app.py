@@ -6,9 +6,14 @@ import streamlit as st
 
 from leaguescheduler import InputParser, LeagueScheduler
 from leaguescheduler.constants import OUTPUT_COLS
-from leaguescheduler.utils import download_output, gather_stats, penalty_input
+from leaguescheduler.utils import (
+    download_output,
+    gather_stats,
+    get_schedules_by_team,
+    penalty_input,
+)
 
-P = 5000
+P = 1000
 
 st.set_page_config(page_title="League Scheduler", page_icon="⚽", layout="wide")
 
@@ -16,20 +21,24 @@ st.title("League Scheduler")
 st.markdown("#### Schedule your double round-robin leagues with ease")
 
 row1 = st.container()
-main_col1, main_col2, main_col3, main_col4, main_col5 = row1.columns([3, 2, 1, 1, 1])
+main_col1, main_col2, main_col3 = row1.columns([4, 3, 2])
+
+# variables that require to be set upfront
+sheet_names = []
+d_penalties = {}
 
 with main_col1:
     st.markdown("**Input file**")
 
     file = st.file_uploader(
-        "Upload one league input per sheet (use **NIET** for unavailability)",
+        "One league per sheet (use **NIET** for unavailability) & optionally a **penalties** sheet",
         type=["xlsx"],
     )
 
-    sheet_names = []
     if file is not None:
         input = InputParser(file)
         sheet_names = input.sheet_names
+        d_penalties = input.penalties
 
     # sheet names as checkboxes
     n_sheet_cols, selected_sheets = 3, []
@@ -72,19 +81,14 @@ with main_col2:
     )
 
 main_col3.markdown("**Penalties**", unsafe_allow_html=True)
-p1 = penalty_input(main_col3, "0", 1000)
-p2 = penalty_input(main_col3, "1 & >=29", 400)
-p3 = penalty_input(main_col3, "2 & 23-28", 160)
-
-main_col4.markdown("&nbsp;", unsafe_allow_html=True)
-p4 = penalty_input(main_col4, "3 & 19-22", 64)
-p5 = penalty_input(main_col4, "4 & 18", 26)
-p6 = penalty_input(main_col4, "5 & 17", 10)
-
-main_col5.markdown("&nbsp;", unsafe_allow_html=True)
-p7 = penalty_input(main_col5, "6 & 16", 4)
-p8 = penalty_input(main_col5, "7 & 15", 2)
-p9 = penalty_input(main_col5, "8 & 14", 1)
+if not d_penalties:
+    main_col3.markdown("No penalties provided in input.")
+else:
+    df_penalties = pd.DataFrame.from_dict(
+        d_penalties, orient="index", columns=["Penalty"]
+    ).rename_axis("Rest day")
+    df_penalties.index = df_penalties.index - 1  # rest days = n_days - 1 for display
+    main_col3.dataframe(df_penalties, use_container_width=True)
 
 st.markdown("---")
 
@@ -102,38 +106,6 @@ with output_col1:
             start_time = time()
 
             d_stats = None
-            input = InputParser(file)
-
-            # gather penalties incl. those for >=29 rest days (~ up to 60)
-            d_penalties = {
-                1: p1,
-                2: p2,
-                3: p3,
-                24: p3,
-                25: p3,
-                26: p3,
-                27: p3,
-                28: p3,
-                29: p3,
-                4: p4,
-                20: p4,
-                21: p4,
-                22: p4,
-                23: p4,
-                5: p5,
-                19: p5,
-                6: p6,
-                18: p6,
-                7: p7,
-                17: p7,
-                8: p8,
-                16: p8,
-                9: p9,
-                15: p9,
-            }
-
-            d_penalties_above_29 = {k: p2 for k in range(30, 61)}
-            d_penalties.update(d_penalties_above_29)
 
             for sheet_name in selected_sheets:
                 st.markdown(f"Scheduling league **{sheet_name}**")
@@ -185,13 +157,21 @@ with output_col2:
         df_stats = pd.DataFrame(d_stats, index=selected_sheets)
         df_stats = df_stats.astype(int)
 
+        # generate sheets with schedules by team
+        output_tea = {}
+        for sheet_name, df_sch in output_sch.items():
+            df_sch_by_team = get_schedules_by_team(df_sch)
+            output_tea[sheet_name] = df_sch_by_team
+
         # remove cost of unfeasible schedules
         df_stats["cost"] = df_stats["cost"] - (df_stats["missing_home_slots"] * P)
 
         # download output file with schedules and additional info
         st.download_button(
             label="Download",
-            data=download_output(output_sch, output_val, output_unu, df_stats),
+            data=download_output(
+                output_sch, output_tea, output_unu, output_val, df_stats
+            ),
             file_name=f"{'_'.join(selected_sheets)}_{datetime.now().strftime('%Y%m%d')}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )

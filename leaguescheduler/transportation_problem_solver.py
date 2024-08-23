@@ -13,7 +13,7 @@ class TransportationProblemSolver:
         sets_home: dict,
         sets_forbidden: dict,
         m: int = 14,
-        P: int = 5000,
+        P: int = 1000,
         R_max: int = 4,
         penalties: dict = {1: 10, 2: 3, 3: 1},
     ) -> None:
@@ -25,7 +25,7 @@ class TransportationProblemSolver:
         :param m: Minimum number of time slots between 2 games with same pair of teams.
         :param P: Cost from dummy supply node q to non-dummy demand node.
         :param R_max: Minimum required time slots for 2 games of same team.
-        :param penalties: Dictionary as {n_days: penalty} where n_days ~ rest days + 1
+        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t.
         """
@@ -100,7 +100,7 @@ class TransportationProblemSolver:
             for i, h in enumerate(set_home):  # C2
                 games_team_w = abs(games_team - h)
                 games_oppo_w = abs(games_oppo - h)
-
+            
                 # forbidden game set
                 if h in self.sets_forbidden[oppo_idx]:  # C3
                     am_cost[i, j] = DISALLOWED_NBR
@@ -120,9 +120,18 @@ class TransportationProblemSolver:
                 if am_cost[i, j] == DISALLOWED_NBR:
                     continue
 
-                # add penalties for game within given number of time slots, zero if not
-                am_cost[i, j] += self.penalties.get(np.nanmin(games_team_w), 0)
-                am_cost[i, j] += self.penalties.get(np.nanmin(games_oppo_w), 0)
+                # add penalties for closest game in past and future for both teams
+                list_delta_games = [
+                    games_team - h,  # forward-looking for team
+                    h - games_team,  # backward-looking for team
+                    games_oppo - h,  # forward-looking for opponent
+                    h - games_oppo,  # backward-looking for opponent
+                ]
+                for delta_games in list_delta_games:
+                    # only positive values respect direction, then take minimum
+                    delta_games_pos = delta_games[delta_games > 0]
+                    if len(delta_games_pos) != 0:
+                        am_cost[i, j] += self.penalties.get(np.nanmin(delta_games_pos), 0)
             # fmt: on
 
         return am_cost

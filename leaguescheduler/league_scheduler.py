@@ -90,7 +90,7 @@ class LeagueScheduler:
         perturbation_length: int = 50,
         n_iterations: int = 1000,
         m: int = 14,
-        P: int = 5000,
+        P: int = 1000,
         R_max: int = 4,
         penalties: dict = {1: 10, 2: 3, 3: 1},
         alpha: float = 0.50,
@@ -107,7 +107,7 @@ class LeagueScheduler:
         :param m: Minimum number of time slots between 2 games with same pair of teams.
         :param P: Cost from dummy supply node q to non-dummy demand node.
         :param R_max: Minimum required time slots for 2 games of same team.
-        :param penalties: Dictionary as {n_days: penalty} where n_days ~ rest days + 1
+        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t.
         :param alpha: Picks perturbation operator 1 with probability alpha.
@@ -271,7 +271,7 @@ class LeagueScheduler:
                 self.logger.info(
                     f"New best at iteration {it} with cost {full_cost_min}"
                 )
-                self.X = X.copy()  # add new optimal schedule
+                self.X = X.copy()  # update to new optimal schedule
 
         # set progress bar to 100% (needed in case of early termination)
         if progress_bar is not None:
@@ -371,22 +371,25 @@ class LeagueScheduler:
         d_val["min_gap_pairs"] = df_days_diff_pairs["days_diff"].min()
         d_val["max_gap_pairs"] = df_days_diff_pairs["days_diff"].max()
 
-        # overview of rest days in matrix form
-        d_val["df_rest_days"] = self.make_df_rest_days(df)
+        # overview of (adjusted) rest days in matrix form
+        d_val["df_rest_days"] = self.make_df_rest_days(df, net=True)
 
         # overview of unused home slots
         d_val["df_unused_home_slots"] = self.make_df_unused_home_slots()
 
         return d_val
 
-    def make_df_rest_days(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Forms 'matrix' of teams vs. number of rest days for given schedule."""
+    def make_df_rest_days(self, df: pd.DataFrame, net: bool = True) -> pd.DataFrame:
+        """
+        Forms a matrix of teams vs. number of rest days for given input schedule.
+
+        :param df: DataFrame with generated schedule.
+        :param net: If True, doesn't count team unavailabilities as a rest day.
+        """
         col_date = self.output_cols[0]
         col_home = self.output_cols[3]
         col_away = self.output_cols[4]
         col_team = "Team"
-
-        df[col_date] = pd.to_datetime(df[col_date])
 
         df_teams = pd.concat(
             [
@@ -394,21 +397,62 @@ class LeagueScheduler:
                 df[[col_date, col_away]].rename(columns={col_away: col_team}),
             ]
         ).sort_values([col_team, col_date])
+
+        df_teams[col_date] = pd.to_datetime(df_teams[col_date])
         df_teams["n_rest_days"] = (
             df_teams.groupby(col_team)[col_date].diff().dt.days - 1
         )
 
-        mat = (
-            df_teams.groupby(col_team)["n_rest_days"].value_counts().unstack().fillna(0)
-        )
-        mat = pd.concat(
-            [mat, pd.DataFrame(mat.sum(axis=0), columns=["TOTAL"]).transpose()], axis=0
+        if net:
+            col_out = "n_rest_days_net"
+
+            data = []
+            for team_idx, time_slots in self.input.sets["forbidden"].items():
+                team_name = self.input.sets["teams"][team_idx]
+                for slot in time_slots:
+                    date = self.input.sets["slots"][slot]
+                    data.append({col_team: team_name, col_date: date})
+
+            df_forbidden = pd.DataFrame(data)
+            df_forbidden[col_date] = pd.to_datetime(df_forbidden[col_date])
+
+            def count_unavailable_days(team, start_date, end_date):
+                """Counts number of unavailable days for a team within interval."""
+                mask = (
+                    (df_forbidden[col_team] == team)
+                    & (df_forbidden[col_date] > start_date)
+                    & (df_forbidden[col_date] < end_date)
+                )
+                return df_forbidden[mask].shape[0]
+
+            df_teams[col_out] = df_teams.apply(
+                lambda row: (
+                    row["n_rest_days"]
+                    - count_unavailable_days(
+                        row[col_team],
+                        # original start date
+                        row[col_date] - pd.Timedelta(days=row["n_rest_days"] + 1),
+                        row[col_date],
+                    )
+                    if pd.notnull(row["n_rest_days"])
+                    else None
+                ),
+                axis=1,
+            )
+        else:
+            col_out = "n_rest_days"
+
+        df_out = df_teams.groupby(col_team)[col_out].value_counts().unstack().fillna(0)
+        df_out = pd.concat(
+            [df_out, pd.DataFrame(df_out.sum(axis=0), columns=["TOTAL"]).transpose()],
+            axis=0,
         )
 
-        return mat
+        return df_out
 
     def make_df_unused_home_slots(self) -> pd.DataFrame:
         """Forms DataFrame with teams and their unused home slots."""
+        col_date = self.output_cols[0]
         col_team = "Team"
 
         list_unused = []
@@ -429,8 +473,9 @@ class LeagueScheduler:
             list_unused.append(df_unused)
 
         df_unused_all = pd.concat(list_unused)[[col_team, "unused"]].set_index(col_team)
-        df_unused_all["unused"] = df_unused_all["unused"].dt.strftime("%d/%m/%Y")
-        df_unused_all.rename(columns={"unused": self.output_cols[0]}, inplace=True)
+        df_unused_all = df_unused_all.rename(columns={"unused": col_date})
+        df_unused_all = df_unused_all.sort_values([col_team, self.output_cols[0]])
+        df_unused_all[col_date] = df_unused_all[col_date].dt.strftime("%d/%m/%Y")
 
         return df_unused_all
 

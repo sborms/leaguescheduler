@@ -44,6 +44,7 @@ Once installed, you can use the scheduler from the command line as follows:
 --output_folder "example_output" \
 --seed 505 \
 --n_iterations 100
+--clip_top 40
 ```
 
 Alternatively, you can execute `make 2rr` which runs the above example.
@@ -60,7 +61,7 @@ Type `help(LeagueScheduler)` to show the documentation.
 
 ### Web application
 
-The league scheduler is also made available through a [Streamlit application](https://leaguescheduler.streamlit.app/). It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. The output file includes for every league and by team the distribution of the number of rest days between games, as well as the unused home time slots per team.
+The league scheduler is also made available through a [Streamlit application](https://leaguescheduler.streamlit.app/). It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. The output file also includes for every league and by team the distribution of the number of adjusted rest days between games (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the unused home time slots per team.
 
 Running through 1000 iterations can take up to 1-2 minutes for a league with approx. 13 teams.
 

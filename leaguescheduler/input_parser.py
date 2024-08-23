@@ -25,7 +25,13 @@ class InputParser:
         self.unavailable = unavailable
 
         self.file = pd.ExcelFile(filename)
-        self.sheet_names = self.file.sheet_names
+        self.sheet_names = [
+            sheet_name
+            for sheet_name in self.file.sheet_names
+            if sheet_name != "penalties"
+        ]
+
+        self.penalties = self.get_penalties()  # same regardless of league sheet
 
         self.data = None
 
@@ -37,6 +43,22 @@ class InputParser:
             self.data = data.reset_index(drop=True)
         else:
             raise ValueError(f"Sheet name {sheet_name} not found in file.")
+
+    def get_penalties(self) -> dict:
+        """Reads penalties (if available) from input Excel file and returns them as a dictionary."""
+        penalties = {}
+        if "penalties" in self.file.sheet_names:
+            penalties = (
+                pd.read_excel(self.file, sheet_name="penalties", index_col=0)
+                .iloc[:, 0]
+                .to_dict()
+            )
+
+        # format needs {n_days: penalty} where n_days = rest days + 1 as an int
+        # 0 --> e.g., a game on Monday and Tuesday (0 rest days but delta t is 1)
+        penalties = {int(k) + 1: v for k, v in penalties.items()}
+
+        return penalties
 
     def parse(self) -> None:
         """Extracts (aka parses) relevant data from input file."""

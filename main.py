@@ -12,16 +12,15 @@ from leaguescheduler.utils import gather_stats, setup_logger
 # fmt: off
 @click.command()
 @click.option("--config_file", default=None, help="Path to a configuration JSON file with (part of) the arguments.")
-@click.option("--input_file", help="Input Excel file with for every team their (in)availability data.")
+@click.option("--input_file", help="Input Excel file with for every team their (in)availability data and optionally a 'penalties' tab with two columns (rest day, penalty).")
 @click.option("--output_folder", help="Folder where the outputs (logs, overview, schedules) will be stored.")
 @click.option("--seed", default=None, type=int, help="Optional seed for np.random.seed().")
 @click.option("--tabu_length", default=4, type=int, help="Number of iterations during which a team cannot be selected.")
 @click.option("--perturbation_length", default=50, type=int, help="Check perturbation need every this many iterations.")
 @click.option("--n_iterations", default=1000, type=int, help="Number of tabu phase iterations.")
 @click.option("--m", default=14, type=int, help="Minimum number of time slots between 2 games with same pair of teams.")
-@click.option("--p", default=5000, type=int, help="Cost from dummy supply node q to non-dummy demand node.")  # P
+@click.option("--p", default=1000, type=int, help="Cost from dummy supply node q to non-dummy demand node.")  # P
 @click.option("--r_max", default=4, type=int, help="Minimum required time slots for 2 games of same team.")  # R_max
-@click.option("--penalties", default={1: 10, 2: 3, 3: 1}, type=dict, help="Dictionary as {n_days: penalty} where n_days ~ rest days + 1.")
 @click.option("--alpha", default=0.50, type=float, help="Picks perturbation operator 1 with probability alpha.")
 @click.option("--beta", default=0.01, type=float, help="Probability of removing a game in operator 1.")
 @click.option("--unavailable", default="NIET", type=str, help="Cell value to indicate that a team is unavailable.")
@@ -52,18 +51,13 @@ def main(ctx, config_file, **kwargs):
     perturbation_length = get_value("perturbation_length", 50)
     n_iterations = get_value("n_iterations", 1000)
     m = get_value("m", 14)
-    p = get_value("p", 5000)
+    p = get_value("p", 1000)
     r_max = get_value("r_max", 4)
-    penalties = get_value("penalties", {1: 10, 2: 3, 3: 1})
     alpha = get_value("alpha", 0.50)
     beta = get_value("beta", 0.01)
     unavailable = get_value("unavailable", "NIET")
     clip_bot = get_value("clip_bot", 2)
     clip_top = get_value("clip_top", 20)
-
-    # ensure keys of penalties are integers
-    if penalties:
-        penalties = {int(k): v for k, v in penalties.items()}
     ############ end: argument parsing ############
 
     if seed is not None:
@@ -90,6 +84,7 @@ def main(ctx, config_file, **kwargs):
 
     d_stats = None
     input = InputParser(input_file, unavailable=unavailable)
+    penalties = input.penalties
 
     for sheet_name in input.sheet_names:
         logger.info(f"PROCESSING LEAGUE > {sheet_name}")
