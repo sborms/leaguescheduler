@@ -645,17 +645,6 @@ class LeagueScheduler:
 
         return self.df_forbidden
 
-    def _count_unavailable_days(
-        self, df, col_team, col_date, team, start_date, end_date
-    ) -> int:
-        """Counts number of unavailable days for a team within interval."""
-        mask = (
-            (df[col_team] == team)
-            & (df[col_date] > start_date)
-            & (df[col_date] < end_date)
-        )
-        return df[mask].shape[0]
-
     def _compute_rest_days_net(
         self, df: pd.DataFrame, col_team, col_date
     ) -> pd.DataFrame:
