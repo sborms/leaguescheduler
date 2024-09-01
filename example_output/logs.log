@@ -1,64 +1,64 @@
-2024-08-23 15:08:39 - INFO - Overview of input arguments:
-2024-08-23 15:08:39 - INFO -  --> input_file = example_input.xlsx
-2024-08-23 15:08:39 - INFO -  --> output_folder = example_output
-2024-08-23 15:08:39 - INFO -  --> seed = 505
-2024-08-23 15:08:39 - INFO -  --> tabu_length = 4
-2024-08-23 15:08:39 - INFO -  --> perturbation_length = 50
-2024-08-23 15:08:39 - INFO -  --> n_iterations = 100
-2024-08-23 15:08:39 - INFO -  --> m = 14
-2024-08-23 15:08:39 - INFO -  --> p = 1000
-2024-08-23 15:08:39 - INFO -  --> r_max = 4
-2024-08-23 15:08:39 - INFO -  --> alpha = 0.5
-2024-08-23 15:08:39 - INFO -  --> beta = 0.01
-2024-08-23 15:08:39 - INFO -  --> unavailable = NIET
-2024-08-23 15:08:39 - INFO -  --> clip_bot = 2
-2024-08-23 15:08:39 - INFO -  --> clip_top = 40
-2024-08-23 15:08:40 - INFO - PROCESSING LEAGUE > LEAGUE A
-2024-08-23 15:08:40 - INFO - Read and parsed input data
-2024-08-23 15:08:40 - INFO - Phase 1: Construction
-2024-08-23 15:08:41 - INFO - Initialized schedule using method 1 with cost 600.0
-2024-08-23 15:08:45 - INFO - Initialized schedule using method 2 with cost 137.0
-2024-08-23 15:08:45 - INFO - Initialization method 2 is best
-2024-08-23 15:08:45 - INFO - Phase 2: Tabu & perturbation
-2024-08-23 15:08:45 - INFO - Tabu phase starts with cost 137.0
-2024-08-23 15:08:45 - INFO - New best at iteration 1 with cost 131.0
-2024-08-23 15:08:46 - INFO - New best at iteration 12 with cost 130.0
-2024-08-23 15:08:46 - INFO - New best at iteration 13 with cost 116.0
-2024-08-23 15:08:46 - INFO - New best at iteration 15 with cost 113.0
-2024-08-23 15:08:46 - INFO - New best at iteration 16 with cost 112.0
-2024-08-23 15:08:46 - INFO - New best at iteration 17 with cost 109.0
-2024-08-23 15:08:46 - INFO - New best at iteration 19 with cost 106.0
-2024-08-23 15:08:47 - INFO - New best at iteration 20 with cost 102.0
-2024-08-23 15:08:47 - INFO - New best at iteration 32 with cost 101.0
-2024-08-23 15:08:48 - INFO - New best at iteration 42 with cost 98.0
-2024-08-23 15:08:49 - INFO - New best at iteration 58 with cost 93.0
-2024-08-23 15:08:49 - INFO - New best at iteration 60 with cost 84.0
-2024-08-23 15:08:49 - INFO - New best at iteration 63 with cost 81.0
-2024-08-23 15:08:49 - INFO - New best at iteration 66 with cost 75.0
-2024-08-23 15:08:50 - INFO - New best at iteration 91 with cost 69.0
-2024-08-23 15:08:50 - INFO - New best at iteration 92 with cost 66.0
-2024-08-23 15:08:50 - INFO - New best at iteration 93 with cost 63.0
-2024-08-23 15:08:51 - INFO - Completed scheduling
-2024-08-23 15:08:51 - INFO - Stored running minimum cost plot
-2024-08-23 15:08:51 - INFO - Stored calendar
-2024-08-23 15:08:52 - INFO - Gathered validation info
-2024-08-23 15:08:53 - INFO - Stored rest days plot
-2024-08-23 15:08:53 - INFO - PROCESSING LEAGUE > LEAGUE B
-2024-08-23 15:08:53 - INFO - Read and parsed input data
-2024-08-23 15:08:53 - INFO - Phase 1: Construction
-2024-08-23 15:08:54 - INFO - Initialized schedule using method 1 with cost 130.0
-2024-08-23 15:08:59 - INFO - Initialized schedule using method 2 with cost 685.0
-2024-08-23 15:08:59 - INFO - Initialization method 1 is best
-2024-08-23 15:08:59 - INFO - Phase 2: Tabu & perturbation
-2024-08-23 15:08:59 - INFO - Tabu phase starts with cost 130.0
-2024-08-23 15:08:59 - INFO - New best at iteration 1 with cost 127.0
-2024-08-23 15:09:02 - INFO - Perturbating schedule at iteration 50
-2024-08-23 15:09:03 - INFO - New best at iteration 81 with cost 125.0
-2024-08-23 15:09:03 - INFO - New best at iteration 82 with cost 122.0
-2024-08-23 15:09:04 - INFO - New best at iteration 99 with cost 119.0
-2024-08-23 15:09:04 - INFO - New best at iteration 100 with cost 107.0
-2024-08-23 15:09:04 - INFO - Completed scheduling
-2024-08-23 15:09:05 - INFO - Stored running minimum cost plot
-2024-08-23 15:09:05 - INFO - Stored calendar
-2024-08-23 15:09:06 - INFO - Gathered validation info
-2024-08-23 15:09:07 - INFO - Stored rest days plot
+2024-09-01 20:49:33 - INFO - Overview of input arguments:
+2024-09-01 20:49:33 - INFO -  --> input_file = example_input.xlsx
+2024-09-01 20:49:33 - INFO -  --> output_folder = example_output
+2024-09-01 20:49:33 - INFO -  --> seed = 505
+2024-09-01 20:49:33 - INFO -  --> tabu_length = 4
+2024-09-01 20:49:33 - INFO -  --> perturbation_length = 50
+2024-09-01 20:49:33 - INFO -  --> n_iterations = 100
+2024-09-01 20:49:33 - INFO -  --> m = 14
+2024-09-01 20:49:33 - INFO -  --> p = 1000
+2024-09-01 20:49:33 - INFO -  --> r_max = 4
+2024-09-01 20:49:33 - INFO -  --> alpha = 0.5
+2024-09-01 20:49:33 - INFO -  --> beta = 0.01
+2024-09-01 20:49:33 - INFO -  --> unavailable = NIET
+2024-09-01 20:49:33 - INFO -  --> clip_bot = 2
+2024-09-01 20:49:33 - INFO -  --> clip_top = 40
+2024-09-01 20:49:33 - INFO - PROCESSING LEAGUE > LEAGUE A
+2024-09-01 20:49:34 - INFO - Read and parsed input data
+2024-09-01 20:49:34 - INFO - Phase 1: Construction
+2024-09-01 20:49:35 - INFO - Initialized schedule using method 1 with cost 600.0
+2024-09-01 20:49:40 - INFO - Initialized schedule using method 2 with cost 137.0
+2024-09-01 20:49:40 - INFO - Initialization method 2 is best
+2024-09-01 20:49:40 - INFO - Phase 2: Tabu & perturbation
+2024-09-01 20:49:40 - INFO - Tabu phase starts with cost 137.0
+2024-09-01 20:49:40 - INFO - New best at iteration 1 with cost 131.0
+2024-09-01 20:49:40 - INFO - New best at iteration 12 with cost 130.0
+2024-09-01 20:49:40 - INFO - New best at iteration 13 with cost 116.0
+2024-09-01 20:49:41 - INFO - New best at iteration 15 with cost 113.0
+2024-09-01 20:49:41 - INFO - New best at iteration 16 with cost 112.0
+2024-09-01 20:49:41 - INFO - New best at iteration 17 with cost 109.0
+2024-09-01 20:49:41 - INFO - New best at iteration 19 with cost 106.0
+2024-09-01 20:49:41 - INFO - New best at iteration 20 with cost 102.0
+2024-09-01 20:49:41 - INFO - New best at iteration 32 with cost 101.0
+2024-09-01 20:49:42 - INFO - New best at iteration 42 with cost 98.0
+2024-09-01 20:49:42 - INFO - New best at iteration 58 with cost 93.0
+2024-09-01 20:49:43 - INFO - New best at iteration 60 with cost 84.0
+2024-09-01 20:49:43 - INFO - New best at iteration 63 with cost 81.0
+2024-09-01 20:49:43 - INFO - New best at iteration 66 with cost 75.0
+2024-09-01 20:49:43 - INFO - New best at iteration 91 with cost 69.0
+2024-09-01 20:49:43 - INFO - New best at iteration 92 with cost 66.0
+2024-09-01 20:49:43 - INFO - New best at iteration 93 with cost 63.0
+2024-09-01 20:49:44 - INFO - Completed scheduling
+2024-09-01 20:49:44 - INFO - Stored running minimum cost plot
+2024-09-01 20:49:44 - INFO - Stored calendar
+2024-09-01 20:49:45 - INFO - Gathered validation info
+2024-09-01 20:49:45 - INFO - Stored rest days plot
+2024-09-01 20:49:45 - INFO - PROCESSING LEAGUE > LEAGUE B
+2024-09-01 20:49:46 - INFO - Read and parsed input data
+2024-09-01 20:49:46 - INFO - Phase 1: Construction
+2024-09-01 20:49:46 - INFO - Initialized schedule using method 1 with cost 130.0
+2024-09-01 20:49:49 - INFO - Initialized schedule using method 2 with cost 685.0
+2024-09-01 20:49:49 - INFO - Initialization method 1 is best
+2024-09-01 20:49:49 - INFO - Phase 2: Tabu & perturbation
+2024-09-01 20:49:49 - INFO - Tabu phase starts with cost 130.0
+2024-09-01 20:49:49 - INFO - New best at iteration 1 with cost 127.0
+2024-09-01 20:49:50 - INFO - Perturbating schedule at iteration 50
+2024-09-01 20:49:51 - INFO - New best at iteration 81 with cost 125.0
+2024-09-01 20:49:51 - INFO - New best at iteration 82 with cost 122.0
+2024-09-01 20:49:51 - INFO - New best at iteration 99 with cost 119.0
+2024-09-01 20:49:51 - INFO - New best at iteration 100 with cost 107.0
+2024-09-01 20:49:51 - INFO - Completed scheduling
+2024-09-01 20:49:52 - INFO - Stored running minimum cost plot
+2024-09-01 20:49:52 - INFO - Stored calendar
+2024-09-01 20:49:53 - INFO - Gathered validation info
+2024-09-01 20:49:53 - INFO - Stored rest days plot

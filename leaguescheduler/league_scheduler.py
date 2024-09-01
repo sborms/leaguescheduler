@@ -377,6 +377,9 @@ class LeagueScheduler:
         # overview of unused home slots
         d_val["df_unused_home_slots"] = self.make_df_unused_home_slots()
 
+        # overview of schedules by team
+        d_val["df_schedules_by_team"] = self.make_df_schedules_by_team(df)
+
         return d_val
 
     def make_df_rest_days(self, df: pd.DataFrame, net: bool = True) -> pd.DataFrame:
@@ -405,40 +408,7 @@ class LeagueScheduler:
 
         if net:
             col_out = "n_rest_days_net"
-
-            data = []
-            for team_idx, time_slots in self.input.sets["forbidden"].items():
-                team_name = self.input.sets["teams"][team_idx]
-                for slot in time_slots:
-                    date = self.input.sets["slots"][slot]
-                    data.append({col_team: team_name, col_date: date})
-
-            df_forbidden = pd.DataFrame(data)
-            df_forbidden[col_date] = pd.to_datetime(df_forbidden[col_date])
-
-            def count_unavailable_days(team, start_date, end_date):
-                """Counts number of unavailable days for a team within interval."""
-                mask = (
-                    (df_forbidden[col_team] == team)
-                    & (df_forbidden[col_date] > start_date)
-                    & (df_forbidden[col_date] < end_date)
-                )
-                return df_forbidden[mask].shape[0]
-
-            df_teams[col_out] = df_teams.apply(
-                lambda row: (
-                    row["n_rest_days"]
-                    - count_unavailable_days(
-                        row[col_team],
-                        # original start date
-                        row[col_date] - pd.Timedelta(days=row["n_rest_days"] + 1),
-                        row[col_date],
-                    )
-                    if pd.notnull(row["n_rest_days"])
-                    else None
-                ),
-                axis=1,
-            )
+            df_teams = self._compute_rest_days_net(df_teams, col_team, col_date)
         else:
             col_out = "n_rest_days"
 
@@ -449,6 +419,41 @@ class LeagueScheduler:
         )
 
         return df_out
+
+    def make_df_schedules_by_team(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Reorders the schedules input by team. Assumes it is already sorted by date and hour."""
+        col_date = self.output_cols[0]
+        col_home = self.output_cols[-2]
+        col_away = self.output_cols[-1]
+        col_team = "Team"
+
+        # clean up some irrelevant columns from validation process first
+        df.drop(columns=["pairs", "days_diff"], inplace=True)
+
+        teams = pd.unique(df[[col_home, col_away]].values.ravel("K"))
+
+        list_sch = []
+        for team in teams:
+            df_team = df[(df[col_home] == team) | (df[col_away] == team)].copy()
+            df_team[col_team] = team
+            list_sch.append(df_team)
+
+        df_by_team = pd.concat(list_sch, ignore_index=True)
+
+        # include rest days columns
+        df_by_team["n_rest_days"] = (
+            df_by_team.groupby(col_team)[col_date].diff().dt.days - 1
+        )
+        df_by_team = self._compute_rest_days_net(df_by_team, col_team, col_date)
+
+        # sort by team and date
+        df_by_team = df_by_team.sort_values(by=[col_team, col_date])
+
+        # fix output format
+        df_by_team = df_by_team.set_index(col_team)
+        df_by_team[col_date] = df_by_team[col_date].dt.strftime("%d/%m/%Y")
+
+        return df_by_team
 
     def make_df_unused_home_slots(self) -> pd.DataFrame:
         """Forms DataFrame with teams and their unused home slots."""
@@ -619,3 +624,68 @@ class LeagueScheduler:
         d_spots = dict(sorted(d_spots.items(), key=lambda x: x[1]))
 
         return d_spots
+
+    def _get_df_forbidden(self) -> pd.DataFrame:
+        """Creates DataFrame with forbidden time slots for each team."""
+        if not hasattr(self, "df_forbidden"):
+            col_date = self.output_cols[0]
+            col_team = "Team"
+
+            data = []
+            for team_idx, time_slots in self.input.sets["forbidden"].items():
+                team_name = self.input.sets["teams"][team_idx]
+                for slot in time_slots:
+                    date = self.input.sets["slots"][slot]
+                    data.append({col_team: team_name, col_date: date})
+
+            df_forbidden = pd.DataFrame(data)
+            df_forbidden[col_date] = pd.to_datetime(df_forbidden[col_date])
+
+            self.df_forbidden = df_forbidden
+
+        return self.df_forbidden
+
+    def _count_unavailable_days(
+        self, df, col_team, col_date, team, start_date, end_date
+    ) -> int:
+        """Counts number of unavailable days for a team within interval."""
+        mask = (
+            (df[col_team] == team)
+            & (df[col_date] > start_date)
+            & (df[col_date] < end_date)
+        )
+        return df[mask].shape[0]
+
+    def _compute_rest_days_net(
+        self, df: pd.DataFrame, col_team, col_date
+    ) -> pd.DataFrame:
+        """Computes net rest days for each team in the DataFrame."""
+        df_forbidden = self._get_df_forbidden()
+
+        def count_unavailable_days(
+            team, start_date: pd.Timestamp, end_date: pd.Timestamp
+        ) -> int:
+            """Counts number of unavailable days for a team within interval."""
+            mask = (
+                (df_forbidden[col_team] == team)
+                & (df_forbidden[col_date] > start_date)
+                & (df_forbidden[col_date] < end_date)
+            )
+            return df_forbidden[mask].shape[0]
+
+        df["n_rest_days_net"] = df.apply(
+            lambda row: (
+                row["n_rest_days"]
+                - count_unavailable_days(
+                    row[col_team],
+                    # original start date
+                    row[col_date] - pd.Timedelta(days=row["n_rest_days"] + 1),
+                    row[col_date],
+                )
+                if pd.notnull(row["n_rest_days"])
+                else None
+            ),
+            axis=1,
+        )
+
+        return df

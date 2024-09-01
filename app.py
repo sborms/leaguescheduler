@@ -6,12 +6,7 @@ import streamlit as st
 
 from leaguescheduler import InputParser, LeagueScheduler
 from leaguescheduler.constants import OUTPUT_COLS
-from leaguescheduler.utils import (
-    download_output,
-    gather_stats,
-    get_schedules_by_team,
-    penalty_input,
-)
+from leaguescheduler.utils import download_output, gather_stats
 
 P = 1000
 
@@ -98,7 +93,7 @@ with output_col1:
     go = st.button("Schedule")
 
     # perform scheduling
-    output_sch, output_val, output_unu = {}, {}, {}
+    output_sch, output_res, output_unu, output_tea = {}, {}, {}, {}
     if go:
         if file is None:
             st.markdown("Upload a file first!")
@@ -144,10 +139,13 @@ with output_col1:
                 output_sch[sheet_name] = df_out
 
                 # store rest days output
-                output_val[sheet_name] = d_val["df_rest_days"]
+                output_res[sheet_name] = d_val["df_rest_days"]
 
                 # store unused home slots output
                 output_unu[sheet_name] = d_val["df_unused_home_slots"]
+
+                # store schedules by team
+                output_tea[sheet_name] = d_val["df_schedules_by_team"]
 
         elapsed_time = time() - start_time
         st.markdown(f"**Done!** Took {int(elapsed_time)} seconds.")
@@ -157,12 +155,6 @@ with output_col2:
         df_stats = pd.DataFrame(d_stats, index=selected_sheets)
         df_stats = df_stats.astype(int)
 
-        # generate sheets with schedules by team
-        output_tea = {}
-        for sheet_name, df_sch in output_sch.items():
-            df_sch_by_team = get_schedules_by_team(df_sch)
-            output_tea[sheet_name] = df_sch_by_team
-
         # remove cost of unfeasible schedules
         df_stats["cost"] = df_stats["cost"] - (df_stats["missing_home_slots"] * P)
 
@@ -170,7 +162,7 @@ with output_col2:
         st.download_button(
             label="Download",
             data=download_output(
-                output_sch, output_tea, output_unu, output_val, df_stats
+                output_sch, output_tea, output_unu, output_res, df_stats
             ),
             file_name=f"{'_'.join(selected_sheets)}_{datetime.now().strftime('%Y%m%d')}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
