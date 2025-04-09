@@ -44,7 +44,7 @@ Once installed, you can use the scheduler from the command line as follows:
 --output_folder "example_output" \
 --seed 505 \
 --n_iterations 100 \
---clip_top 40
+--clip_upp 40
 ```
 
 Alternatively, you can execute `make 2rr` which runs the above example.

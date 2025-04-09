@@ -21,11 +21,11 @@ from leaguescheduler.utils import gather_stats, setup_logger
 @click.option("--m", default=14, type=int, help="Minimum number of time slots between 2 games with same pair of teams.")
 @click.option("--p", default=1000, type=int, help="Cost from dummy supply node q to non-dummy demand node.")  # P
 @click.option("--r_max", default=4, type=int, help="Minimum required time slots for 2 games of same team.")  # R_max
-@click.option("--alpha", default=0.50, type=float, help="Picks perturbation operator 1 with probability alpha.")
+@click.option("--alpha", default=0.50, type=float, help="Probability of picking perturbation operator 1.")
 @click.option("--beta", default=0.01, type=float, help="Probability of removing a game in operator 1.")
 @click.option("--unavailable", default="NIET", type=str, help="Cell value to indicate that a team is unavailable.")
 @click.option("--clip_bot", default=2, type=int, help="Value for clipping rest days plot on low end.")  # clips[0]
-@click.option("--clip_top", default=20, type=int, help="Value for clipping rest days plot on high end.")  # clips[1]
+@click.option("--clip_upp", default=20, type=int, help="Value for clipping rest days plot on high end.")  # clips[1]
 @click.pass_context
 # fmt: on
 def main(ctx, config_file, **kwargs):
@@ -57,7 +57,7 @@ def main(ctx, config_file, **kwargs):
     beta = get_value("beta", 0.01)
     unavailable = get_value("unavailable", "NIET")
     clip_bot = get_value("clip_bot", 2)
-    clip_top = get_value("clip_top", 20)
+    clip_upp = get_value("clip_upp", 20)
     ############ end: argument parsing ############
 
     if seed is not None:
@@ -129,7 +129,7 @@ def main(ctx, config_file, **kwargs):
 
         scheduler.plot_rest_days(
             series=d_val["df_rest_days"].loc["TOTAL"],
-            clips=(clip_bot, clip_top),
+            clips=(clip_bot, clip_upp),
             title_suffix=sheet_name,
             path=f"{output_folder}/{sheet_name}_rest_days.png",
         )

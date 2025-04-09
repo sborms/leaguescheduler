@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="leaguescheduler",
-    version="0.1",
+    version="0.2",
     py_modules=["main"],
     packages=find_packages(),  # finds all packages based on __init__.py file
     install_requires=requirements,

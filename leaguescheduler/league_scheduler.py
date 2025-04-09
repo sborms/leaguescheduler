@@ -26,7 +26,7 @@ class Perturbation:
         """
         Initializes a new instance of the Perturbation class.
 
-        :param alpha: Picks perturbation operator 1 with probability alpha.
+        :param alpha: Probability of picking perturbation operator 1.
         :param beta: Probability of removing a game in operator 1.
         """
         self.alpha = alpha
@@ -210,7 +210,7 @@ class LeagueScheduler:
         """
         Solves transportation problem to (re)schedule all home games of
         a non-tabu team (= not recently chosen), for a certain number of
-        iterations or until the full cost reached zero. Every new optimal
+        iterations or until the full cost reaches zero. Every new optimal
         schedule is added to self.X.
 
         :param progress_bar: A progress bar object, e.g., streamlit.progress(0.0).
