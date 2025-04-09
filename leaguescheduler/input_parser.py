@@ -70,11 +70,11 @@ class InputParser:
         self.locations = {team_name: data[team_name][0] for team_name in team_names}
 
         # get team indices and names (T)
-        teams = {key: team_name for key, team_name in enumerate(team_names, start=0)}
+        teams = dict(enumerate(team_names))
 
         # get all slots (S)
         dates = pd.to_datetime(data.iloc[1:, 0])  # not necessarily continuous
-        slots = {key: date for key, date in enumerate(dates, start=0)}
+        slots = dict(enumerate(dates))
 
         # process core (i.e. without dates and locations) for remaining sets extraction
         self.core = data.iloc[1:, 1:].reset_index(drop=True)

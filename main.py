@@ -31,7 +31,7 @@ from leaguescheduler.utils import gather_stats, setup_logger
 def main(ctx, config_file, **kwargs):
     ############ start: argument parsing ############
     if config_file is not None:
-        with open(config_file, "r") as f:
+        with open(config_file) as f:
             config = json.load(f)
 
     # use command-line argument if provided, else use config value or default
@@ -138,7 +138,7 @@ def main(ctx, config_file, **kwargs):
     df_stats = pd.DataFrame(d_stats, index=input.sheet_names)
     df_stats.to_excel(f"{output_folder}/stats.xlsx")
 
-    click.secho(f"Done!", fg="green")
+    click.secho("Done!", fg="green")
 
 
 if __name__ == "__main__":

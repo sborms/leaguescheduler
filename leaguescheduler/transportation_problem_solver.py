@@ -15,7 +15,7 @@ class TransportationProblemSolver:
         m: int = 14,
         P: int = 1000,
         R_max: int = 4,
-        penalties: dict = {1: 10, 2: 3, 3: 1},
+        penalties: dict = None,
     ) -> None:
         """
         Initializes a new instance of the Transportation class.
@@ -29,6 +29,10 @@ class TransportationProblemSolver:
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t.
         """
+        # set penalties default
+        if penalties is None:
+            penalties = {1: 10, 2: 3, 3: 1}
+
         self.sets_home = sets_home
         self.sets_forbidden = sets_forbidden
         self.m = m
@@ -100,7 +104,7 @@ class TransportationProblemSolver:
             for i, h in enumerate(set_home):  # C2
                 games_team_w = abs(games_team - h)
                 games_oppo_w = abs(games_oppo - h)
-            
+
                 # forbidden game set
                 if h in self.sets_forbidden[oppo_idx]:  # C3
                     am_cost[i, j] = DISALLOWED_NBR

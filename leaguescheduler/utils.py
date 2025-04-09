@@ -4,8 +4,6 @@ import logging
 import pandas as pd
 import streamlit as st
 
-from .constants import OUTPUT_COLS
-
 
 def ndigits(number: float) -> int:
     """Returns number of digits in a number."""

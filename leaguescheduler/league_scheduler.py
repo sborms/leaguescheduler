@@ -92,7 +92,7 @@ class LeagueScheduler:
         m: int = 14,
         P: int = 1000,
         R_max: int = 4,
-        penalties: dict = {1: 10, 2: 3, 3: 1},
+        penalties: dict = None,
         alpha: float = 0.50,
         beta: float = 0.01,
         logger: logging.Logger = logging.getLogger(__name__),
@@ -124,6 +124,10 @@ class LeagueScheduler:
         # initialize target matrix with teams & slots
         X = np.eye(len(input.sets["teams"])) * LARGE_NBR  # diagonal is to be ignored
         self.X = np.where(X == 0, np.nan, X)
+
+        # set penalties default
+        if penalties is None:
+            penalties = {1: 10, 2: 3, 3: 1}
 
         # initialize transportation object
         self.tps = TPS(
@@ -194,10 +198,10 @@ class LeagueScheduler:
 
         # pick best method to set schedule after construction phase
         if cost1 < cost2:
-            self.logger.info(f"Initialization method 1 is best")
+            self.logger.info("Initialization method 1 is best")
             self.X, self.list_home_costs = X1, list_home_costs1
         else:
-            self.logger.info(f"Initialization method 2 is best")
+            self.logger.info("Initialization method 2 is best")
             self.X, self.list_home_costs = X2, list_home_costs2
 
     def tabu_phase(
@@ -541,24 +545,24 @@ class LeagueScheduler:
 
         # clip series to a lower and upper bound
         if clips:
-            l, b = clips
-            l_name, b_name = f"<={l}", f">={b}"
+            lower, upper = clips
+            l_name, u_name = f"<={lower}", f">={upper}"
 
             series_.index = series_.index.astype(int)
 
-            bot = series_[series_.index <= l].sum()
-            top = series_[series_.index >= b].sum()
+            bot = series_[series_.index <= lower].sum()
+            top = series_[series_.index >= upper].sum()
 
-            series_ = series_[(series_.index > l) & (series_.index < b)]
-            series_.loc[l], series_.loc[b] = bot, top
+            series_ = series_[(series_.index > lower) & (series_.index < upper)]
+            series_.loc[lower], series_.loc[upper] = bot, top
 
-            series_.rename(index={l: l_name, b: b_name}, inplace=True)
+            series_.rename(index={lower: l_name, upper: u_name}, inplace=True)
 
-            index_no_lb = [idx for idx in series_.index if idx not in [l_name, b_name]]
-            series_ = series_.reindex([l_name] + index_no_lb + [b_name])
+            index_no_lb = [idx for idx in series_.index if idx not in [l_name, u_name]]
+            series_ = series_.reindex([l_name] + index_no_lb + [u_name])
 
             colors = [
-                "skyblue" if (idx != l_name and idx != b_name) else "orange"
+                "skyblue" if (idx != l_name and idx != u_name) else "orange"
                 for idx in series_.index
             ]
 
@@ -609,7 +613,7 @@ class LeagueScheduler:
                 }
         elif method == 2:
             if d_spots is None:
-                d_spots = {key: None for key in self.input.sets["teams"]}
+                d_spots = dict.fromkeys(self.input.sets["teams"])
             for team_idx in d_spots:
                 set_home = self.tps.sets_home[team_idx]
                 opponents = [t for t in range(X.shape[0]) if t != team_idx]

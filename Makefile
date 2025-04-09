@@ -1,13 +1,18 @@
 brush:
-	isort .
-	black .
+	ruff check --select I --fix .
+	ruff format .
+
+lint:
+	ruff check .
 
 install:
-	python -m pip install --upgrade pip
-	pip install -r requirements.txt
+	pip install uv
+	uv venv
+	uv sync
 
 freeze:
-	pip freeze --local > requirements.txt
+	uv lock
+	uv pip freeze > requirements.txt
 
 2rr:
 	cmd /c rmdir /s /q example_output
