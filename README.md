@@ -80,7 +80,7 @@ Additionally, the output file includes for every league and by team the distribu
 
 Running through 1000 iterations can take up to 1-2 minutes for a league with approx. 13 teams.
 
-If the app happens to be sleeping due to inactivity, feel free to wake it back up. You can run the app locally with `make web`.
+If the app happens to be sleeping due to inactivity, just wake it back up. You can run the app locally with `make web`.
 
 # Feedback?
 

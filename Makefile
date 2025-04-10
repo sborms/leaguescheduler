@@ -23,3 +23,6 @@ web:
 
 experiment:
 	uv run 2rr --config_file "experiments/config.json"
+
+time:
+	uv run timings.py
