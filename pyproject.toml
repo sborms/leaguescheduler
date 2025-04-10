@@ -1,7 +1,9 @@
 [project]
 name = "leaguescheduler"
+version = "0.2.0"
+description = "Generate optimal schedules for your time-relaxed double round-robin (2RR) sports leagues"
+authors = [ { name = "Samuel Borms", email = "sam@desirdata.com" }]
 requires-python = ">=3.10"
-version = "0.1.0"
 dependencies = [
     "click==8.1.7",
     "hungarian-algorithm==0.1.11",
@@ -26,6 +28,17 @@ dev = [
     "pytest>=8.3.4",
     "ipython==8.28.0",
 ]
+
+[project.scripts]
+2rr = "leaguescheduler.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["leaguescheduler"]
+
+[build-system]
+requires = ["setuptools>=70.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 fix = true

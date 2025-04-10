@@ -1,4 +1,4 @@
-# 2RR League Scheduler
+# ⚽📅 2RR League Scheduler
 
 ![Python 3.10.10](https://img.shields.io/badge/python-3.10.10-blue.svg)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app)
@@ -14,6 +14,17 @@ If you are looking to schedule a sports league with at least the following const
 
 ... then this will help you!
 
+# Installation
+
+Clone the repository, then install the package in **editable mode** by running the following commands in the root directory ([install `uv`](https://docs.astral.sh/uv/getting-started/installation) if necessary):
+
+```bash
+uv venv
+uv pip install -e .
+```
+
+Make sure to stay in the correct environment once installed, or else use `uv run ...` for commands.
+
 # Usage
 
 ## Input
@@ -28,15 +39,13 @@ For instance, a league could consist of 12 teams, each with about 12 to 20 reser
 
 The generated output is an Excel file with one league per sheet and the respective optimal calendar.
 
-The calendar includes the date, time, location, home team and away team for each game. It also includes the unplanned games (at the bottom).
+The calendar includes the date, time, location, home team and away team for each game. The unplanned games are put at the bottom.
 
 ## Scheduling
 
 ### CLI
 
-After having cloned the repository you can install the package in editable mode by running `pip install -e .` in the root directory.
-
-Once installed, you can use the scheduler from the command line as follows:
+You can use the scheduler from the command line as follows:
 
 ```bash
 2rr \
@@ -47,11 +56,13 @@ Once installed, you can use the scheduler from the command line as follows:
 --clip_upp 40
 ```
 
-Alternatively, you can execute `make 2rr` which runs the above example.
+Alternatively, you can execute `make example` which runs the above example.
 
 See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments. You can also specify a `.json` configuration file and use that as (only) CLI input.
 
-To more freely play around, you can also import the core classes in your own Python script or notebook:
+### Classes
+
+To more freely play around, you can import the core classes in your own Python script or notebook:
 
 ```python
 from leaguescheduler import InputParser, LeagueScheduler
@@ -61,11 +72,15 @@ Type `help(LeagueScheduler)` to show the documentation.
 
 ### Web application
 
-The league scheduler is also made available through a [Streamlit application](https://leaguescheduler.streamlit.app/). It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. The output file also includes for every league and by team the distribution of the number of adjusted rest days between games (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the unused home time slots per team.
+The league scheduler is also made available through a hosted [Streamlit application](https://leaguescheduler.streamlit.app).
+
+It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. 
+
+Additionally, the output file includes for every league and by team the distribution of the number of adjusted rest days between games (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the unused home time slots per team. This facilitates post-analysis of the quality of the generated calendar.
 
 Running through 1000 iterations can take up to 1-2 minutes for a league with approx. 13 teams.
 
-If the app happens to be sleeping due to inactivity, feel free to wake it back up.
+If the app happens to be sleeping due to inactivity, feel free to wake it back up. You can run the app locally with `make web`.
 
 # Feedback?
 

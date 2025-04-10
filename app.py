@@ -10,7 +10,7 @@ from leaguescheduler.utils import download_output, gather_stats
 
 P = 1000
 
-st.set_page_config(page_title="League Scheduler", page_icon="⚽", layout="wide")
+st.set_page_config(page_title="League Scheduler", page_icon="⚽📅", layout="wide")
 
 st.title("League Scheduler")
 st.markdown("#### Schedule your double round-robin leagues with ease")
@@ -53,7 +53,7 @@ with main_col2:
     )
     R_max = st.number_input(
         "**Required days for 2 games of same team**",
-        min_value=1,
+        min_value=2,
         max_value=20,
         value=5,
     )

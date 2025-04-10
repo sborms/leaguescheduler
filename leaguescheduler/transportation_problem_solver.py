@@ -18,16 +18,20 @@ class TransportationProblemSolver:
         penalties: dict = None,
     ) -> None:
         """
-        Initializes a new instance of the Transportation class.
+        Initializes a new instance of the TransportationProblemSolver class.
 
         :param sets_home: Dictionary with all home slots by team.
         :param sets_forbidden: Dictionary with all forbidden slots by team.
         :param m: Minimum number of time slots between 2 games with same pair of teams.
+            --> e.g., one game at slot t and the other game at slot t + m is allowed
+                but at slot t + m - 1 is disallowed
         :param P: Cost from dummy supply node q to non-dummy demand node.
         :param R_max: Minimum required time slots for 2 games of same team.
-        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1
+            --> e.g., a single team can play a game at slot t and one as from
+                slot t + R_max - 1 (as 'R_max' slots range from t to t + R_max - 1)
+        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
             --> e.g., respective penalty is assigned if already 1 game
-                between slot t - n_days and t + n_days excl. t.
+                between slot t - n_days and t + n_days excl. t
         """
         # set penalties default
         if penalties is None:
@@ -37,7 +41,7 @@ class TransportationProblemSolver:
         self.sets_forbidden = sets_forbidden
         self.m = m
         self.P = P
-        self.R_max = R_max
+        self.R_max = max(2, R_max)  # must be at least 2
         self.penalties = penalties
 
     def solve(self, X: np.ndarray, team_idx: int) -> tuple[list, int]:
@@ -102,24 +106,26 @@ class TransportationProblemSolver:
 
             # fmt: off
             for i, h in enumerate(set_home):  # C2
-                games_team_w = abs(games_team - h)
-                games_oppo_w = abs(games_oppo - h)
-
                 # forbidden game set
                 if h in self.sets_forbidden[oppo_idx]:  # C3
                     am_cost[i, j] = DISALLOWED_NBR
-                # team already plays away game
+                # team already plays game
                 elif h in games_team:  # C4
                     am_cost[i, j] = DISALLOWED_NBR
-                # opponent already plays home/away game
+                # opponent already plays game
                 elif h in games_oppo:  # C4
-                    am_cost[i, j] = DISALLOWED_NBR
-                # already 2 (aka >1) games within 'R_max' slots (e.g. 7 allows >1 game between dates 01 -> 07)
-                elif sum(games_team_w < self.R_max) > 1 or sum(games_oppo_w < self.R_max) > 1:  # C5
                     am_cost[i, j] = DISALLOWED_NBR
                 # game i-j is within m days of game j-i
                 elif abs(h - X[oppo_idx, team_idx]) < self.m:  # C6
                     am_cost[i, j] = DISALLOWED_NBR
+                else:
+                    # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < R_max
+                    games_team_d = abs(games_team - h) + 1
+                    games_oppo_d = abs(games_oppo - h) + 1
+
+                    # max. 2 games for 'R_max' slots (e.g., R_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
+                    if sum(games_team_d < self.R_max) > 0 or sum(games_oppo_d < self.R_max) > 0:  # C5
+                        am_cost[i, j] = DISALLOWED_NBR
 
                 if am_cost[i, j] == DISALLOWED_NBR:
                     continue

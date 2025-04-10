@@ -76,6 +76,10 @@ class LeagueScheduler:
         (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
         (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
 
+    A time slot uniquely maps to a weekday (with an associated playing hour). For
+    instance, if slot t is a Monday, then slot t + 3 is a Thursday, with in total 4 slots
+    considered. The number of rest days is 2 in this case (Tuesday and Wednesday).
+
     The implementation very closely follows the tabu search based algorithm from:
     Van Bulck, D., Goossens, D. R., & Spieksma, F. C. R. (2019).
     Scheduling a non-professional indoor football league: a tabu search based approach.
@@ -105,11 +109,15 @@ class LeagueScheduler:
         :param perturbation_length: Check perturbation need every this many iterations.
         :param n_iterations: Number of tabu phase iterations.
         :param m: Minimum number of time slots between 2 games with same pair of teams.
+            --> e.g., one game at slot t and the other game at slot t + m is allowed
+                but at slot t + m - 1 is disallowed
         :param P: Cost from dummy supply node q to non-dummy demand node.
         :param R_max: Minimum required time slots for 2 games of same team.
-        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1
+            --> e.g., a single team can play a game at slot t and one as from
+                slot t + R_max - 1 (as 'R_max' slots range from t to t + R_max - 1)
+        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
             --> e.g., respective penalty is assigned if already 1 game
-                between slot t - n_days and t + n_days excl. t.
+                between slot t - n_days and t + n_days excl. t
         :param alpha: Picks perturbation operator 1 with probability alpha.
         :param beta: Probability of removing a game in operator 1.
         :param logger: (optional) Logger instance for logging purposes.
