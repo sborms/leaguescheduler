@@ -91,6 +91,7 @@ class TransportationProblemSolver:
 
         return X, total_cost
 
+    # fmt: off
     def create_cost_matrix(
         self,
         X: np.ndarray,
@@ -100,51 +101,70 @@ class TransportationProblemSolver:
     ) -> np.ndarray:
         """Creates costs in adjacency matrix based on current schedule & constraints."""
         am_cost = np.zeros((len(set_home), len(opponents)))
-        for j, oppo_idx in enumerate(opponents):  # C1
-            games_team = np.concatenate((X[team_idx, :], X[:, team_idx]))
+
+        games_team = np.concatenate((X[team_idx, :], X[:, team_idx]))
+
+        home_dates = np.array(list(set_home)) # C2 - home date availability
+        home_dates_r = home_dates.reshape(-1, 1)  # convert into column vector Nx1
+
+        # NOTE: Gets broadcasted into 1xK - Nx1 => NxK matrix such that
+        # a single row (k = 1, ..., K) has all current game slots minus a specific available home slot (n = 1, ..., N)
+        games_team_d = np.abs(games_team.reshape(1, -1) - home_dates_r) + 1  # team game distances for all home dates
+
+        for j, oppo_idx in enumerate(opponents):
             games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
 
-            # fmt: off
-            for i, h in enumerate(set_home):  # C2
-                # forbidden game set
-                if h in self.sets_forbidden[oppo_idx]:  # C3
-                    am_cost[i, j] = DISALLOWED_NBR
-                # team already plays game
-                elif h in games_team:  # C4
-                    am_cost[i, j] = DISALLOWED_NBR
-                # opponent already plays game
-                elif h in games_oppo:  # C4
-                    am_cost[i, j] = DISALLOWED_NBR
-                # game i-j is within m days of game j-i
-                elif abs(h - X[oppo_idx, team_idx]) < self.m:  # C6
-                    am_cost[i, j] = DISALLOWED_NBR
-                else:
-                    # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < R_max
-                    games_team_d = abs(games_team - h) + 1
-                    games_oppo_d = abs(games_oppo - h) + 1
+            # C3 - forbidden game set
+            forbidden_mask = np.array([h in self.sets_forbidden[oppo_idx] for h in home_dates])
 
-                    # max. 2 games for 'R_max' slots (e.g., R_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
-                    if sum(games_team_d < self.R_max) > 0 or sum(games_oppo_d < self.R_max) > 0:  # C5
-                        am_cost[i, j] = DISALLOWED_NBR
+            # C4 - team already plays game
+            team_plays_mask = np.isin(home_dates, games_team)
 
-                if am_cost[i, j] == DISALLOWED_NBR:
-                    continue
+            # C4 - opponent already plays game
+            oppo_plays_mask = np.isin(home_dates, games_oppo)
 
-                # add penalties for closest game in past and future for both teams
-                list_delta_games = [
-                    games_team - h,  # forward-looking for team
-                    h - games_team,  # backward-looking for team
-                    games_oppo - h,  # forward-looking for opponent
-                    h - games_oppo,  # backward-looking for opponent
-                ]
-                for delta_games in list_delta_games:
-                    # only positive values respect direction, then take minimum
-                    delta_games_pos = delta_games[delta_games > 0]
-                    if len(delta_games_pos) != 0:
-                        am_cost[i, j] += self.penalties.get(np.nanmin(delta_games_pos), 0)
-            # fmt: on
+            # C5 - max. 2 games for 'R_max' slots (e.g., R_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
+            # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < R_max
+            games_oppo_d = np.abs(games_oppo.reshape(1, -1) - home_dates_r) + 1  # opponent game distances for all home dates
+            games_in_r_max_team = (games_team_d < self.R_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
+            games_in_r_max_oppo = (games_oppo_d < self.R_max).sum(axis=1) > 0
+            r_max_mask = games_in_r_max_team | games_in_r_max_oppo
+
+            # C6 - game i-j is within m days of game j-i
+            reciprocal_game_mask = np.abs(home_dates - X[oppo_idx, team_idx]) < self.m
+
+            # set disallowed cost for all disallowed slots at once
+            disallowed = (
+                forbidden_mask |
+                team_plays_mask |
+                oppo_plays_mask |
+                reciprocal_game_mask |
+                r_max_mask
+            )
+            am_cost[disallowed, j] = DISALLOWED_NBR
+
+            # process penalty calculations for allowed slots
+            allowed_indices = np.where(~disallowed)[0]
+            if len(allowed_indices) > 0:
+                for i in allowed_indices:
+                    h = home_dates[i]
+
+                    penalties = 0
+                    for delta_games in [
+                        games_team - h,  # forward-looking for team
+                        h - games_team,  # backward-looking for team
+                        games_oppo - h,  # forward-looking for opponent
+                        h - games_oppo,  # backward-looking for opponent
+                    ]:
+                        # only positive values respect direction, then take minimum
+                        delta_games_pos = delta_games[delta_games > 0]
+                        if len(delta_games_pos) != 0:
+                            penalties += self.penalties.get(np.nanmin(delta_games_pos), 0)
+
+                    am_cost[i, j] = penalties
 
         return am_cost
+    # fmt: on
 
     def get_total_cost(self, indexes: list[tuple[int, int]], am: list) -> float:
         """Returns total cost in adjacency matrix from optimal indexes."""

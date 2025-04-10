@@ -5,7 +5,7 @@ import pandas as pd
 
 from leaguescheduler import InputParser, LeagueScheduler
 
-N_ITERATIONS_LIST = [10, 50, 100, 500, 1000, 5000]
+N_ITERATIONS_LIST = [10, 50, 100, 500, 1000, 5000, 10000]
 
 input_file = "example_input.xlsx"
 output_file = "experiments/timings_base.txt"

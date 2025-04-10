@@ -26,3 +26,7 @@ experiment:
 
 time:
 	uv run timings.py
+
+profile:
+	python -m cProfile -o profile.out timings.py
+	snakeviz profile.out

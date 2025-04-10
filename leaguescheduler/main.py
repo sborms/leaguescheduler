@@ -10,6 +10,7 @@ from leaguescheduler.utils import gather_stats, setup_logger
 
 
 # fmt: off
+# TODO: Can I limit copy-paste of argument documentation?
 @click.command()
 @click.option("--config_file", default=None, help="Path to a configuration JSON file with (part of) the arguments.")
 @click.option("--input_file", help="Input Excel file with for every team their (un)availability data and optionally a 'penalties' tab with two columns (rest day, penalty).")
