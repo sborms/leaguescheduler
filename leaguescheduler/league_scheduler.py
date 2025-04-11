@@ -66,26 +66,7 @@ class Perturbation:
 
 
 class LeagueScheduler:
-    """
-    Generates an optimal schedule for a time-relaxed double round-robin (2RR) league
-    accounting for following constraints:
-        (C1) Each team plays a home game against each other team at most once.
-        (C2) Each home team's availability set (H) is respected.
-        (C3) Each away team's unavailability set (A) is respected.
-        (C4) Each team plays at most one game per time slot.
-        (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
-        (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
-
-    A time slot uniquely maps to a weekday (with an associated playing hour). For
-    instance, if slot t is a Monday, then slot t + 3 is a Thursday, with in total 4 slots
-    considered. The number of rest days is 2 in this case (Tuesday and Wednesday).
-
-    The implementation very closely follows the tabu search based algorithm from:
-    Van Bulck, D., Goossens, D. R., & Spieksma, F. C. R. (2019).
-    Scheduling a non-professional indoor football league: a tabu search based approach.
-    Annals of Operations Research, 275(2), 715-730.
-    https://doi.org/10.1007/s10479-018-3013-x
-    """
+    """Generates an optimal schedule for a time-relaxed double round-robin (2RR) league."""
 
     def __init__(
         self,
@@ -104,6 +85,28 @@ class LeagueScheduler:
         """
         Initializes a new instance of the LeagueScheduler class.
 
+        Generates an optimal schedule for a time-relaxed double round-robin (2RR) league
+        accounting for following constraints:
+        - (C1) Each team plays a home game against each other team at most once.
+        - (C2) Each home team its availability set (H) is respected.
+        - (C3) Each away team its unavailability set (A) is respected.
+        - (C4) Each team plays at most one game per time slot.
+        - (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
+        - (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
+
+        The implementation very closely follows the tabu search based algorithm from:
+        > Van Bulck, D., Goossens, D. R., & Spieksma, F. C. R. (2019).
+        _Scheduling a non-professional indoor football league: a tabu search based approach._
+        Annals of Operations Research, 275(2), 715-730.
+        https://doi.org/10.1007/s10479-018-3013-x
+
+        A time slot uniquely maps to a weekday (with an associated playing hour). For
+        instance, if slot t is a Monday, then slot t + 3 is a Thursday, with in total 4 slots
+        considered. The number of rest days is 2 in this case (Tuesday and Wednesday).
+
+        See the [project README](https://github.com/sborms/leaguescheduler) for
+        more information about usage.
+
         :param input: InputParser object containing all relevant data.
         :param tabu_length: Number of iterations during which a team cannot be selected.
         :param perturbation_length: Check perturbation need every this many iterations.
@@ -118,6 +121,7 @@ class LeagueScheduler:
         :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t
+                Example input: {1: 10, 2: 3, 3: 1}
         :param alpha: Picks perturbation operator 1 with probability alpha.
         :param beta: Probability of removing a game in operator 1.
         :param logger: (optional) Logger instance for logging purposes.
@@ -132,10 +136,6 @@ class LeagueScheduler:
         # initialize target matrix with teams & slots
         X = np.eye(len(input.sets["teams"])) * LARGE_NBR  # diagonal is to be ignored
         self.X = np.where(X == 0, np.nan, X)
-
-        # set penalties default
-        if penalties is None:
-            penalties = {1: 10, 2: 3, 3: 1}
 
         # initialize transportation object
         self.tps = TPS(

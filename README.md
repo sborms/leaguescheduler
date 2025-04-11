@@ -33,11 +33,11 @@ The Excel file `example_input.xlsx` contains an example of the input data. The i
 
 One sheet corresponds to one league. 
 
-For instance, a league could consist of 12 teams, each with about 12 to 20 reserved dates and a number of unavailable dates.
+For instance, a league could consist of 10 teams, each with about 12 to 20 reserved dates and a number of unavailable dates.
 
 ## Output
 
-The generated output is an Excel file with one league per sheet and the respective optimal calendar.
+The generated output for a single league is a solutions matrix `X` that can easily be converted into a clear `DataFrame` calendar, and stored as an Excel file.
 
 The calendar includes the date, time, location, home team and away team for each game. The unplanned games are put at the bottom.
 
@@ -62,13 +62,24 @@ See `2rr --help` (and the research paper mentioned at the top) for more informat
 
 ### Classes
 
-To more freely play around, you can import the core classes in your own Python script or notebook:
+To more freely play around, you can import the core classes in your own Python script or notebook. This is a minimal example:
 
 ```python
 from leaguescheduler import InputParser, LeagueScheduler
+
+input = InputParser(input_file)
+input.read(sheet_name=input.sheet_names[0])  # take first sheet with league data
+input.parse()
+
+scheduler = LeagueScheduler(input=input, n_iterations=10)
+scheduler.construction_phase()
+scheduler.tabu_phase()
+
+df = scheduler.create_calendar()
+scheduler.store_calendar(df, file="out/calendar.xlsx")
 ```
 
-Type `help(LeagueScheduler)` to show the documentation.
+Type `help(LeagueScheduler)` to show the full documentation.
 
 ### Web application
 
@@ -78,9 +89,22 @@ It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and
 
 Additionally, the output file includes for every league and by team the distribution of the number of adjusted rest days between games (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the unused home time slots per team. This facilitates post-analysis of the quality of the generated calendar.
 
-Running through 1000 iterations can take up to 1-2 minutes for a league with approx. 13 teams.
-
 If the app happens to be sleeping due to inactivity, just wake it back up. You can run the app locally with `make web`.
+
+### Timings
+
+How long does the scheduler take? This table sheds some baseline light:
+
+|                  | 12 teams |
+|------------------|--------- |
+| 10 iterations    | 4s       |
+| 100 iterations   | 5s       |
+| 1000 iterations  | 24s      |
+| 10000 iterations | 221s     |
+
+_Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
+
+A few 100s iterations are typically sufficient to arrive at a good schedule.
 
 # Feedback?
 

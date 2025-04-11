@@ -25,8 +25,8 @@ experiment:
 	uv run 2rr --config_file "experiments/config.json"
 
 time:
-	uv run timings.py
+	uv run timings/timings.py
 
 profile:
-	python -m cProfile -o profile.out timings.py
+	python -m cProfile -o profile.out timings/timings.py
 	snakeviz profile.out

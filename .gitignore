@@ -2,7 +2,6 @@
 experiments/
 spielerei.ipynb
 profile.out
-timings.py.lprof
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

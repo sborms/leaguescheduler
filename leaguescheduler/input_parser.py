@@ -46,7 +46,8 @@ class InputParser:
 
     def get_penalties(self) -> dict:
         """Reads penalties (if available) from input Excel file and returns them as a dictionary."""
-        penalties = {}
+        penalties = None  # fallback
+
         if "penalties" in self.file.sheet_names:
             penalties = (
                 pd.read_excel(self.file, sheet_name="penalties", index_col=0)
@@ -54,9 +55,9 @@ class InputParser:
                 .to_dict()
             )
 
-        # format needs {n_days: penalty} where n_days = rest days + 1 as an int
-        # 0 --> e.g., a game on Monday and Tuesday (0 rest days but delta t is 1)
-        penalties = {int(k) + 1: v for k, v in penalties.items()}
+            # format needs {n_days: penalty} where n_days = rest days + 1 as an int
+            # 0 --> e.g., a game on Monday and Tuesday (0 rest days but delta t is 1)
+            penalties = {int(k) + 1: v for k, v in penalties.items()}
 
         return penalties
 

@@ -32,11 +32,8 @@ class TransportationProblemSolver:
         :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
             --> e.g., respective penalty is assigned if already 1 game
                 between slot t - n_days and t + n_days excl. t
+                Example input: {1: 10, 2: 3, 3: 1}
         """
-        # set penalties default
-        if penalties is None:
-            penalties = {1: 10, 2: 3, 3: 1}
-
         self.sets_home = sets_home
         self.sets_forbidden = sets_forbidden
         self.m = m
@@ -111,14 +108,17 @@ class TransportationProblemSolver:
         # a single row (k = 1, ..., K) has all current game slots minus a specific available home slot (n = 1, ..., N)
         games_team_d = np.abs(games_team.reshape(1, -1) - home_dates_r) + 1  # team game distances for all home dates
 
+        # C4 - team already plays game
+        team_plays_mask = np.isin(home_dates, games_team)
+
+        # C5 - cf. below
+        games_in_r_max_team = (games_team_d < self.R_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
+
         for j, oppo_idx in enumerate(opponents):
             games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
 
             # C3 - forbidden game set
             forbidden_mask = np.array([h in self.sets_forbidden[oppo_idx] for h in home_dates])
-
-            # C4 - team already plays game
-            team_plays_mask = np.isin(home_dates, games_team)
 
             # C4 - opponent already plays game
             oppo_plays_mask = np.isin(home_dates, games_oppo)
@@ -126,7 +126,6 @@ class TransportationProblemSolver:
             # C5 - max. 2 games for 'R_max' slots (e.g., R_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
             # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < R_max
             games_oppo_d = np.abs(games_oppo.reshape(1, -1) - home_dates_r) + 1  # opponent game distances for all home dates
-            games_in_r_max_team = (games_team_d < self.R_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
             games_in_r_max_oppo = (games_oppo_d < self.R_max).sum(axis=1) > 0
             r_max_mask = games_in_r_max_team | games_in_r_max_oppo
 
@@ -149,17 +148,18 @@ class TransportationProblemSolver:
                 for i in allowed_indices:
                     h = home_dates[i]
 
+                    forw_t = games_team - h  # forward-looking for team
+                    back_t = h - games_team  # backward-looking for team
+                    forw_o = games_oppo - h  # forward-looking for opponent
+                    back_o = h - games_oppo  # backward-looking for opponent
+                    deltas = [forw_t, back_t, forw_o, back_o]
+
                     penalties = 0
-                    for delta_games in [
-                        games_team - h,  # forward-looking for team
-                        h - games_team,  # backward-looking for team
-                        games_oppo - h,  # forward-looking for opponent
-                        h - games_oppo,  # backward-looking for opponent
-                    ]:
+                    for delta in deltas:
                         # only positive values respect direction, then take minimum
-                        delta_games_pos = delta_games[delta_games > 0]
-                        if len(delta_games_pos) != 0:
-                            penalties += self.penalties.get(np.nanmin(delta_games_pos), 0)
+                        delta_pos = delta[delta > 0]
+                        if delta_pos.size > 0:
+                            penalties += self.penalties.get(delta_pos.min(), 0)
 
                     am_cost[i, j] = penalties
 
