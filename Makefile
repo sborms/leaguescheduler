@@ -16,13 +16,22 @@ freeze:
 
 example:
 	cmd /c rmdir /s /q example_output
-	2rr --input_file "example_input.xlsx" --output_folder "example_output" --seed 505 --n_iterations 100 --clip_upp 40
+	2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 505 --n-iterations 100 --clip-upp 40
 
 web:
 	uv run streamlit run app.py
 
 experiment:
-	uv run 2rr --config_file "experiments/config.json"
+	uv run 2rr \
+		--input-file "experiments/input.xlsx" \
+		--output-folder "experiments/output" \
+		--seed 505 \
+		--n-iterations 2000 \
+		--m 7 \
+		--p 1000 \
+		--r-max 5 \
+		--clip-bot 0 \
+		--clip-upp 50
 
 time:
 	uv run timings/timings.py

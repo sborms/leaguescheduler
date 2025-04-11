@@ -5,7 +5,7 @@
 
 This repository implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently.
 
-If you are looking to schedule a sports league with at least the following constraints:
+If you are looking to schedule a sports league with at least the following constraints...
 - Everyone plays 1 home game and 1 away game against each other
 - Home games are played on reserved dates
 - Away games are not played on unavailable dates
@@ -58,20 +58,22 @@ You can use the scheduler from the command line as follows:
 
 Alternatively, you can execute `make example` which runs the above example.
 
-See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments. You can also specify a `.json` configuration file and use that as (only) CLI input.
+See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments.
 
 ### Classes
 
-To more freely play around, you can import the core classes in your own Python script or notebook. This is a minimal example:
+To more freely play around, you can import the core classes in your own Python script or notebook.
+
+Here's a minimal example with default parameters:
 
 ```python
 from leaguescheduler import InputParser, LeagueScheduler
 
 input = InputParser(input_file)
-input.read(sheet_name=input.sheet_names[0])  # take first sheet with league data
+input.from_excel(sheet_name=input.sheet_names[0])  # take first sheet with league data
 input.parse()
 
-scheduler = LeagueScheduler(input=input, n_iterations=10)
+scheduler = LeagueScheduler(input=input)
 scheduler.construction_phase()
 scheduler.tabu_phase()
 
@@ -87,20 +89,20 @@ The league scheduler is also made available through a hosted [Streamlit applicat
 
 It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. 
 
-Additionally, the output file includes for every league and by team the distribution of the number of adjusted rest days between games (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the unused home time slots per team. This facilitates post-analysis of the quality of the generated calendar.
+Additionally, the output file includes for every league and by team the distribution of the **number of adjusted rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
-If the app happens to be sleeping due to inactivity, just wake it back up. You can run the app locally with `make web`.
+If the app happens to be sleeping due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
 
 ### Timings
 
 How long does the scheduler take? This table sheds some baseline light:
 
-|                  | 12 teams |
-|------------------|--------- |
-| 10 iterations    | 4s       |
-| 100 iterations   | 5s       |
-| 1000 iterations  | 24s      |
-| 10000 iterations | 221s     |
+|                  | 13 teams | 4 teams  |
+|------------------|--------- | -------- |
+| 10 iterations    | ~4s      | ~2s      |
+| 100 iterations   | ~5s      | ~3s      |
+| 1000 iterations  | ~22s     | ~18s     |
+| 10000 iterations | ~186s    | ~146s    |
 
 _Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
 

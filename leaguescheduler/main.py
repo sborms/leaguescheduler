@@ -1,86 +1,52 @@
-import json
 import os
+from typing import Annotated
 
-import click
 import numpy as np
 import pandas as pd
+import typer
+from rich import print
 
-from leaguescheduler import InputParser, LeagueScheduler
+from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 from leaguescheduler.utils import gather_stats, setup_logger
+
+# NOTE: This approach https://gist.github.com/tbenthompson/9db0452445451767b59f5cb0611ab483 allows to use an overridable config file
+# NOTE: Underscores are replaced with dashes in the command line arguments
+# NOTE: Documentation of the SchedulerParams is copy-pasted from the dataclass
+
+app = typer.Typer()
 
 
 # fmt: off
-# TODO: Can I limit copy-paste of argument documentation?
-@click.command()
-@click.option("--config_file", default=None, help="Path to a configuration JSON file with (part of) the arguments.")
-@click.option("--input_file", help="Input Excel file with for every team their (un)availability data and optionally a 'penalties' tab with two columns (rest day, penalty).")
-@click.option("--output_folder", help="Folder where the outputs (logs, overview, schedules) will be stored.")
-@click.option("--seed", default=None, type=int, help="Optional seed for np.random.seed().")
-@click.option("--tabu_length", default=4, type=int, help="Number of iterations during which a team cannot be selected.")
-@click.option("--perturbation_length", default=50, type=int, help="Check perturbation need every this many iterations.")
-@click.option("--n_iterations", default=1000, type=int, help="Number of tabu phase iterations.")
-@click.option("--m", default=14, type=int, help="Minimum number of time slots between 2 games with same pair of teams.")
-@click.option("--p", default=1000, type=int, help="Cost from dummy supply node q to non-dummy demand node.")  # P
-@click.option("--r_max", default=4, type=int, help="Minimum required time slots for 2 games of same team.")  # R_max
-@click.option("--alpha", default=0.50, type=float, help="Probability of picking perturbation operator 1.")
-@click.option("--beta", default=0.01, type=float, help="Probability of removing a game in operator 1.")
-@click.option("--unavailable", default="NIET", type=str, help="Cell value to indicate that a team is unavailable.")
-@click.option("--clip_bot", default=2, type=int, help="Value for clipping rest days plot on low end.")  # clips[0]
-@click.option("--clip_upp", default=20, type=int, help="Value for clipping rest days plot on high end.")  # clips[1]
-@click.pass_context
-# fmt: on
-def main(ctx, config_file, **kwargs):
-    ############ start: argument parsing ############
-    if config_file is not None:
-        with open(config_file) as f:
-            config = json.load(f)
-
-    # use command-line argument if provided, else use config value or default
-    def get_value(key, default=None):
-        if (
-            config_file is None
-            or ctx.get_parameter_source(key) == click.core.ParameterSource.COMMANDLINE
-        ):
-            return kwargs[key]  # command-line argument or click default
-        else:
-            return config.get(key, default)  # config value or default
-
-    input_file = get_value("input_file")
-    output_folder = get_value("output_folder")
-    seed = get_value("seed")
-    tabu_length = get_value("tabu_length", 4)
-    perturbation_length = get_value("perturbation_length", 50)
-    n_iterations = get_value("n_iterations", 1000)
-    m = get_value("m", 14)
-    p = get_value("p", 1000)
-    r_max = get_value("r_max", 4)
-    alpha = get_value("alpha", 0.50)
-    beta = get_value("beta", 0.01)
-    unavailable = get_value("unavailable", "NIET")
-    clip_bot = get_value("clip_bot", 2)
-    clip_upp = get_value("clip_upp", 20)
-    ############ end: argument parsing ############
-
+@app.command()
+def main(
+    input_file: Annotated[str, typer.Option(help="Input Excel file with for every team their (un)availability data.")],
+    output_folder: Annotated[str, typer.Option(help="Folder where the outputs (logs, overview, schedules) will be stored.")],
+    seed: Annotated[int, typer.Option(help="Optional seed for np.random.seed().")] = None,
+    unavailable:  Annotated[str, typer.Option(help="Cell value to indicate that a team is unavailable.")] = "NIET",
+    clip_bot: Annotated[int, typer.Option(help="Value for clipping rest days plot on low end.")] = 2,  # clips[0]
+    clip_upp: Annotated[int, typer.Option(help="Value for clipping rest days plot on high end.")] = 20,  # clips[1]
+    tabu_length: Annotated[int, typer.Option(help="Number of iterations during which a team cannot be selected.")] = SchedulerParams.tabu_length,
+    perturbation_length: Annotated[int, typer.Option(help="Check perturbation need every this many iterations.")] = SchedulerParams.perturbation_length,
+    n_iterations: Annotated[int, typer.Option(help="Number of tabu phase iterations.")] = SchedulerParams.n_iterations,
+    m: Annotated[int, typer.Option(help="Minimum number of time slots between 2 games with same pair of teams.")] = SchedulerParams.m,
+    p: Annotated[int, typer.Option(help="Cost from dummy supply node q to non-dummy demand node.")] = SchedulerParams.P,
+    r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = SchedulerParams.R_max,
+    alpha: Annotated[float, typer.Option(help="Probability of picking perturbation operator 1.")] = SchedulerParams.alpha,
+    beta: Annotated[float, typer.Option(help="Probability of removing a game in operator 1.")] = SchedulerParams.beta,
+):
+    # fmt: on
     if seed is not None:
         np.random.seed(seed)
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-        click.secho(f"Created output folder {output_folder}/", fg="green")
+        print(f"[green]Created output folder {output_folder}/[/green]")
 
     logger = setup_logger(logfile=f"{output_folder}/logs.log")
 
     logger.info("Inputs:")
     for key, value in locals().items():
-        if key not in [
-            "ctx",
-            "config_file",
-            "kwargs",
-            "f",
-            "config",
-            "get_value",
-            "logger",
-        ]:
+        if key != "logger":
             logger.info(f" --> {key} = {value}")
 
     d_stats = None
@@ -90,12 +56,11 @@ def main(ctx, config_file, **kwargs):
     for sheet_name in input.sheet_names:
         logger.info(f"PROCESSING LEAGUE > {sheet_name}")
 
-        input.read(sheet_name=sheet_name)
+        input.from_excel(sheet_name=sheet_name)
         input.parse()
         logger.info("Read and parsed input data")
 
-        scheduler = LeagueScheduler(
-            input=input,
+        params = SchedulerParams(
             tabu_length=tabu_length,
             perturbation_length=perturbation_length,
             n_iterations=n_iterations,
@@ -105,6 +70,11 @@ def main(ctx, config_file, **kwargs):
             penalties=penalties,
             alpha=alpha,
             beta=beta,
+        )
+
+        scheduler = LeagueScheduler(
+            input=input,
+            params=params,
             logger=logger,
         )
 
@@ -139,8 +109,4 @@ def main(ctx, config_file, **kwargs):
     df_stats = pd.DataFrame(d_stats, index=input.sheet_names)
     df_stats.to_excel(f"{output_folder}/stats.xlsx")
 
-    click.secho("Done!", fg="green")
-
-
-if __name__ == "__main__":
-    main()
+    print("[green]Done![/green] :smile:")

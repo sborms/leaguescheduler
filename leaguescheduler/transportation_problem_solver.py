@@ -22,17 +22,10 @@ class TransportationProblemSolver:
 
         :param sets_home: Dictionary with all home slots by team.
         :param sets_forbidden: Dictionary with all forbidden slots by team.
-        :param m: Minimum number of time slots between 2 games with same pair of teams.
-            --> e.g., one game at slot t and the other game at slot t + m is allowed
-                but at slot t + m - 1 is disallowed
-        :param P: Cost from dummy supply node q to non-dummy demand node.
-        :param R_max: Minimum required time slots for 2 games of same team.
-            --> e.g., a single team can play a game at slot t and one as from
-                slot t + R_max - 1 (as 'R_max' slots range from t to t + R_max - 1)
-        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
-            --> e.g., respective penalty is assigned if already 1 game
-                between slot t - n_days and t + n_days excl. t
-                Example input: {1: 10, 2: 3, 3: 1}
+        :param m: See SchedulerParams for parameter details.
+        :param P: See SchedulerParams for parameter details.
+        :param R_max: See SchedulerParams for parameter details.
+        :param penalties: See SchedulerParams for parameter details.
         """
         self.sets_home = sets_home
         self.sets_forbidden = sets_forbidden
@@ -112,13 +105,14 @@ class TransportationProblemSolver:
         team_plays_mask = np.isin(home_dates, games_team)
 
         # C5 - cf. below
+        # TODO: Why sometimes games planned with lower rest days than R_max in theory allows?
         games_in_r_max_team = (games_team_d < self.R_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
 
         for j, oppo_idx in enumerate(opponents):
             games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
 
             # C3 - forbidden game set
-            forbidden_mask = np.array([h in self.sets_forbidden[oppo_idx] for h in home_dates])
+            forbidden_mask = np.array([h in self.sets_forbidden[oppo_idx] for h in home_dates], dtype=bool)
 
             # C4 - opponent already plays game
             oppo_plays_mask = np.isin(home_dates, games_oppo)

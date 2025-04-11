@@ -4,7 +4,7 @@ from time import time
 import pandas as pd
 import streamlit as st
 
-from leaguescheduler import InputParser, LeagueScheduler
+from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 from leaguescheduler.constants import OUTPUT_COLS
 from leaguescheduler.utils import download_output, gather_stats
 
@@ -105,16 +105,20 @@ with output_col1:
             for sheet_name in selected_sheets:
                 st.markdown(f"Scheduling league **{sheet_name}**")
 
-                input.read(sheet_name=sheet_name)
+                input.from_excel(sheet_name=sheet_name)
                 input.parse()
 
-                scheduler = LeagueScheduler(
-                    input,
+                params = SchedulerParams(
                     P=P,
                     n_iterations=n_iterations,
                     m=m + 1,  # from rest days to time slots
                     R_max=R_max,
                     penalties=d_penalties,
+                )
+
+                scheduler = LeagueScheduler(
+                    input,
+                    params=params,
                 )
 
                 scheduler.construction_phase()

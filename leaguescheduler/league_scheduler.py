@@ -7,6 +7,7 @@ import streamlit as st
 
 from .constants import LARGE_NBR, OUTPUT_COLS
 from .input_parser import InputParser
+from .params import SchedulerParams
 from .transportation_problem_solver import TransportationProblemSolver as TPS
 
 # NOTE: Below minor features of the algorithm are NOT YET IMPLEMENTED
@@ -26,8 +27,7 @@ class Perturbation:
         """
         Initializes a new instance of the Perturbation class.
 
-        :param alpha: Probability of picking perturbation operator 1.
-        :param beta: Probability of removing a game in operator 1.
+        See SchedulerParams for parameter details.
         """
         self.alpha = alpha
         self.beta = beta
@@ -66,71 +66,48 @@ class Perturbation:
 
 
 class LeagueScheduler:
-    """Generates an optimal schedule for a time-relaxed double round-robin (2RR) league."""
+    """
+    Generates an optimal schedule for a time-relaxed double round-robin (2RR) league
+    accounting for following constraints:
+    - (C1) Each team plays a home game against each other team at most once.
+    - (C2) Each home team its availability set (H) is respected.
+    - (C3) Each away team its unavailability set (A) is respected.
+    - (C4) Each team plays at most one game per time slot.
+    - (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
+    - (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
+
+    The implementation very closely follows the tabu search based algorithm from:
+    > Van Bulck, D., Goossens, D. R., & Spieksma, F. C. R. (2019).
+    _Scheduling a non-professional indoor football league: a tabu search based approach._
+    Annals of Operations Research, 275(2), 715-730.
+    https://doi.org/10.1007/s10479-018-3013-x
+
+    A time slot uniquely maps to a weekday (with an associated playing hour). For
+    instance, if slot t is a Monday, then slot t + 3 is a Thursday, with in total 4 slots
+    considered. The number of rest days is 2 in this case (Tuesday and Wednesday).
+    """
 
     def __init__(
         self,
         input: InputParser,
-        tabu_length: int = 4,
-        perturbation_length: int = 50,
-        n_iterations: int = 1000,
-        m: int = 14,
-        P: int = 1000,
-        R_max: int = 4,
-        penalties: dict = None,
-        alpha: float = 0.50,
-        beta: float = 0.01,
+        params: SchedulerParams,
         logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
         """
         Initializes a new instance of the LeagueScheduler class.
 
-        Generates an optimal schedule for a time-relaxed double round-robin (2RR) league
-        accounting for following constraints:
-        - (C1) Each team plays a home game against each other team at most once.
-        - (C2) Each home team its availability set (H) is respected.
-        - (C3) Each away team its unavailability set (A) is respected.
-        - (C4) Each team plays at most one game per time slot.
-        - (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
-        - (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
-
-        The implementation very closely follows the tabu search based algorithm from:
-        > Van Bulck, D., Goossens, D. R., & Spieksma, F. C. R. (2019).
-        _Scheduling a non-professional indoor football league: a tabu search based approach._
-        Annals of Operations Research, 275(2), 715-730.
-        https://doi.org/10.1007/s10479-018-3013-x
-
-        A time slot uniquely maps to a weekday (with an associated playing hour). For
-        instance, if slot t is a Monday, then slot t + 3 is a Thursday, with in total 4 slots
-        considered. The number of rest days is 2 in this case (Tuesday and Wednesday).
-
         See the [project README](https://github.com/sborms/leaguescheduler) for
         more information about usage.
 
         :param input: InputParser object containing all relevant data.
-        :param tabu_length: Number of iterations during which a team cannot be selected.
-        :param perturbation_length: Check perturbation need every this many iterations.
-        :param n_iterations: Number of tabu phase iterations.
-        :param m: Minimum number of time slots between 2 games with same pair of teams.
-            --> e.g., one game at slot t and the other game at slot t + m is allowed
-                but at slot t + m - 1 is disallowed
-        :param P: Cost from dummy supply node q to non-dummy demand node.
-        :param R_max: Minimum required time slots for 2 games of same team.
-            --> e.g., a single team can play a game at slot t and one as from
-                slot t + R_max - 1 (as 'R_max' slots range from t to t + R_max - 1)
-        :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
-            --> e.g., respective penalty is assigned if already 1 game
-                between slot t - n_days and t + n_days excl. t
-                Example input: {1: 10, 2: 3, 3: 1}
-        :param alpha: Picks perturbation operator 1 with probability alpha.
-        :param beta: Probability of removing a game in operator 1.
+        :param params: See SchedulerParams for parameter details.
         :param logger: (optional) Logger instance for logging purposes.
         """
         # assign input data to carry along
         self.input = input
-        self.tabu_length = tabu_length
-        self.perturbation_length = perturbation_length
-        self.n_iterations = n_iterations
+        self.tabu_length = params.tabu_length
+        self.perturbation_length = params.perturbation_length
+        self.n_iterations = params.n_iterations
         self.logger = logger
 
         # initialize target matrix with teams & slots
@@ -141,14 +118,14 @@ class LeagueScheduler:
         self.tps = TPS(
             sets_forbidden=input.sets["forbidden"],
             sets_home=input.sets["home"],
-            m=m,
-            P=P,
-            R_max=R_max,
-            penalties=penalties,
+            m=params.m,
+            P=params.P,
+            R_max=params.R_max,
+            penalties=params.penalties,
         )
 
         # initialize perturbation object
-        self.perturbation = Perturbation(alpha=alpha, beta=beta)
+        self.perturbation = Perturbation(alpha=params.alpha, beta=params.beta)
 
         # initialize output columns
         self.output_cols = OUTPUT_COLS

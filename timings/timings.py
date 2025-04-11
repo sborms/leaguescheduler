@@ -3,9 +3,9 @@ from contextlib import contextmanager
 
 import pandas as pd
 
-from leaguescheduler import InputParser, LeagueScheduler
+from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 
-N_TEAMS_LIST = [12]
+N_TEAMS_LIST = [13, 4]
 N_ITERATIONS_LIST = [10, 100, 1000, 10000]
 
 input_file = "example_input.xlsx"
@@ -17,16 +17,15 @@ seed = 505
 def optimize(n_teams, n_iterations):
     input = InputParser(input_file)
 
-    input.read(sheet_name=sheet_name)
+    input.from_excel(sheet_name=sheet_name)
     input.parse()
 
-    # limit the number of teams
+    # extract the number of teams
     input.data = input.data.iloc[:, : n_teams + 1]
 
     scheduler = LeagueScheduler(
         input=input,
-        n_iterations=n_iterations,
-        penalties=input.penalties,
+        params=SchedulerParams(n_iterations=n_iterations, penalties=input.penalties),
     )
     scheduler.construction_phase()
     scheduler.tabu_phase()

@@ -35,7 +35,7 @@ class InputParser:
 
         self.data = None
 
-    def read(self, sheet_name: str = None) -> None:
+    def from_excel(self, sheet_name: str = None) -> None:
         """Reads data from input Excel file and sheet, then assigns it to self.data."""
         if sheet_name is None or sheet_name in self.sheet_names:
             data = pd.read_excel(self.file, sheet_name=sheet_name)

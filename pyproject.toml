@@ -5,7 +5,6 @@ description = "Generate optimal schedules for your time-relaxed double round-rob
 authors = [ { name = "Samuel Borms", email = "sam@desirdata.com" }]
 requires-python = ">=3.10"
 dependencies = [
-    "click==8.1.7",
     "hungarian-algorithm==0.1.11",
     "ipykernel==6.29.4",
     "jupyter_client==8.6.2",
@@ -17,9 +16,10 @@ dependencies = [
     "packaging==24.0",
     "pandas==2.2.2",
     "streamlit==1.35.0",
+    "typer>=0.15.2",
     "urllib3==2.2.1",
     "uvicorn==0.30.1",
-    "XlsxWriter==3.2.0"
+    "XlsxWriter==3.2.0",
 ]
 
 [dependency-groups]
@@ -31,7 +31,7 @@ dev = [
 ]
 
 [project.scripts]
-2rr = "leaguescheduler.main:main"
+2rr = "leaguescheduler.main:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
