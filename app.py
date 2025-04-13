@@ -61,7 +61,7 @@ with main_col2:
         "**Max. number of iterations**",
         min_value=10,
         max_value=50000,
-        value=10000,
+        value=1000,
     )
 
     main_col2_sub_col1, main_col2_sub_col2 = main_col2.columns([1, 1])
@@ -151,8 +151,8 @@ with output_col1:
                 # store schedules by team
                 output_tea[sheet_name] = d_val["df_schedules_by_team"]
 
-        elapsed_time = time() - start_time
-        st.markdown(f"**Done!** Took {int(elapsed_time)} seconds.")
+            elapsed_time = time() - start_time
+            st.markdown(f"**Done!** Took {int(elapsed_time)} seconds.")
 
 with output_col2:
     if len(output_sch) > 0:
