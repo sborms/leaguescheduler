@@ -5,7 +5,7 @@ from .utils import fill_value
 
 
 class InputParser:
-    """Reads input from Excel file for given league and extracts relevant data."""
+    """Reads input from Excel file for given league and parses relevant data."""
 
     def __init__(self, filename: str, unavailable: str = "NIET") -> None:
         """
@@ -34,15 +34,7 @@ class InputParser:
         self.penalties = self.get_penalties()  # same regardless of league sheet
 
         self.data = None
-
-    def from_excel(self, sheet_name: str = None) -> None:
-        """Reads data from input Excel file and sheet, then assigns it to self.data."""
-        if sheet_name is None or sheet_name in self.sheet_names:
-            data = pd.read_excel(self.file, sheet_name=sheet_name)
-            data = data.drop(1, axis=0)  # drop row at index 1 (row 3 in Excel file)
-            self.data = data.reset_index(drop=True)
-        else:
-            raise ValueError(f"Sheet name {sheet_name} not found in file.")
+        self.parsed = False
 
     def get_penalties(self) -> dict:
         """Reads penalties (if available) from input Excel file and returns them as a dictionary."""
@@ -60,6 +52,15 @@ class InputParser:
             penalties = {int(k) + 1: v for k, v in penalties.items()}
 
         return penalties
+
+    def from_excel(self, sheet_name: str = None) -> None:
+        """Reads data from input Excel file and sheet, then assigns it to self.data."""
+        if sheet_name is None or sheet_name in self.sheet_names:
+            data = pd.read_excel(self.file, sheet_name=sheet_name)
+            data = data.drop(1, axis=0)  # drop row at index 1 (row 3 in Excel file)
+            self.data = data.reset_index(drop=True)
+        else:
+            raise ValueError(f"Sheet name {sheet_name} not found in file.")
 
     def parse(self) -> None:
         """Extracts (aka parses) relevant data from input file."""
@@ -97,3 +98,5 @@ class InputParser:
             "home": sets_home,
             "forbidden": sets_forbidden,
         }
+
+        self.parsed = True

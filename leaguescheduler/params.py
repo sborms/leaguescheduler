@@ -10,10 +10,10 @@ class SchedulerParams:
     :param m: Minimum number of time slots between 2 games with same pair of teams.
         --> e.g., one game at slot t and the other game at slot t + m is allowed
             but at slot t + m - 1 is disallowed
-    :param P: Cost from dummy supply node q to non-dummy demand node.
-    :param R_max: Minimum required time slots for 2 games of same team.
+    :param p: Cost from dummy supply node q to non-dummy demand node.
+    :param r_max: Minimum required time slots for 2 games of same team.
         --> e.g., a single team can play a game at slot t and one as from
-            slot t + R_max - 1 (as 'R_max' slots range from t to t + R_max - 1)
+            slot t + r_max - 1 (as 'r_max' slots range from t to t + r_max - 1)
     :param penalties: Dictionary as {n_days: penalty} where n_days = rest days + 1.
         --> e.g., respective penalty is assigned if already 1 game
             between slot t - n_days and t + n_days excl. t
@@ -26,8 +26,8 @@ class SchedulerParams:
     perturbation_length: int = 50
     n_iterations: int = 1000
     m: int = 14
-    P: int = 1000
-    R_max: int = 4
+    p: int = 1000
+    r_max: int = 4
     penalties: dict[int, int] | None = None
     alpha: float = 0.5
     beta: float = 0.01

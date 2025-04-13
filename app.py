@@ -51,7 +51,7 @@ with main_col2:
         max_value=100,
         value=6,
     )
-    R_max = st.number_input(
+    r_max = st.number_input(
         "**Required days for 2 games of same team**",
         min_value=2,
         max_value=20,
@@ -109,10 +109,10 @@ with output_col1:
                 input.parse()
 
                 params = SchedulerParams(
-                    P=P,
+                    p=P,
                     n_iterations=n_iterations,
                     m=m + 1,  # from rest days to time slots
-                    R_max=R_max,
+                    r_max=r_max,
                     penalties=d_penalties,
                 )
 
@@ -130,7 +130,7 @@ with output_col1:
                 df = scheduler.create_calendar()
 
                 # compute validation statistics
-                d_val = scheduler.validate_calendar(df)
+                d_val = scheduler.validate_calendar(df, fl_net_rest_days=True)
                 d_stats = gather_stats(d_val, d_stats)
 
                 # store calendar output

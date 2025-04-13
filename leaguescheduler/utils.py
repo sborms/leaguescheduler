@@ -1,6 +1,7 @@
 import io
 import logging
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -101,3 +102,19 @@ def penalty_input(col: st.columns, n: str, value: int) -> st.number_input:
         max_value=1000,
         value=value,
     )
+
+
+def drop_nearby_points_from_array(arr: np.array, r_max: int) -> np.array:
+    """Sequentially drops second point if pairwise difference is less than r_max."""
+    if len(arr) <= 1:
+        return arr.copy()
+
+    arr_out = [arr[0]]
+    for i in range(1, len(arr)):
+        val = arr[i]
+        if (val - arr_out[-1]) + 1 < r_max:
+            continue
+        else:
+            arr_out.append(val)
+
+    return np.array(arr_out)

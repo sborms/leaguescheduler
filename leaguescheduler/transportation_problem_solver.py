@@ -13,8 +13,8 @@ class TransportationProblemSolver:
         sets_home: dict,
         sets_forbidden: dict,
         m: int = 14,
-        P: int = 1000,
-        R_max: int = 4,
+        p: int = 1000,
+        r_max: int = 4,
         penalties: dict = None,
     ) -> None:
         """
@@ -23,15 +23,15 @@ class TransportationProblemSolver:
         :param sets_home: Dictionary with all home slots by team.
         :param sets_forbidden: Dictionary with all forbidden slots by team.
         :param m: See SchedulerParams for parameter details.
-        :param P: See SchedulerParams for parameter details.
-        :param R_max: See SchedulerParams for parameter details.
+        :param p: See SchedulerParams for parameter details.
+        :param r_max: See SchedulerParams for parameter details.
         :param penalties: See SchedulerParams for parameter details.
         """
         self.sets_home = sets_home
         self.sets_forbidden = sets_forbidden
         self.m = m
-        self.P = P
-        self.R_max = max(2, R_max)  # must be at least 2
+        self.p = p
+        self.r_max = max(2, r_max)  # must be at least 2
         self.penalties = penalties
 
     def solve(self, X: np.ndarray, team_idx: int) -> tuple[list, int]:
@@ -48,7 +48,7 @@ class TransportationProblemSolver:
 
         # construct components of adjacency matrix (= am)
         am_cost = self.create_cost_matrix(X, team_idx, set_home, opponents)
-        am_bott = np.full((n_opponents, n_opponents), self.P)
+        am_bott = np.full((n_opponents, n_opponents), self.p)
         am_righ = np.zeros((dim, dim - n_opponents))
 
         # construct full original adjacency matrix
@@ -105,8 +105,7 @@ class TransportationProblemSolver:
         team_plays_mask = np.isin(home_dates, games_team)
 
         # C5 - cf. below
-        # TODO: Why sometimes games planned with lower rest days than R_max in theory allows?
-        games_in_r_max_team = (games_team_d < self.R_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
+        games_in_r_max_team = (games_team_d < self.r_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
 
         for j, oppo_idx in enumerate(opponents):
             games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
@@ -117,10 +116,10 @@ class TransportationProblemSolver:
             # C4 - opponent already plays game
             oppo_plays_mask = np.isin(home_dates, games_oppo)
 
-            # C5 - max. 2 games for 'R_max' slots (e.g., R_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
-            # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < R_max
+            # C5 - max. 2 games for 'r_max' slots (e.g., r_max=7 allows at most 2 games between dates 01 -> 07 / t -> t + 6)
+            # NOTE: For [t, h = t + x] we cannot have nbr. of slots x + 1 < r_max
             games_oppo_d = np.abs(games_oppo.reshape(1, -1) - home_dates_r) + 1  # opponent game distances for all home dates
-            games_in_r_max_oppo = (games_oppo_d < self.R_max).sum(axis=1) > 0
+            games_in_r_max_oppo = (games_oppo_d < self.r_max).sum(axis=1) > 0
             r_max_mask = games_in_r_max_team | games_in_r_max_oppo
 
             # C6 - game i-j is within m days of game j-i

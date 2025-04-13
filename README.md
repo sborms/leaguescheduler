@@ -70,7 +70,7 @@ Here's a minimal example with default parameters:
 from leaguescheduler import InputParser, LeagueScheduler
 
 input = InputParser(input_file)
-input.from_excel(sheet_name=input.sheet_names[0])  # take first sheet with league data
+input.from_excel(sheet_name=input.sheet_names[0])
 input.parse()
 
 scheduler = LeagueScheduler(input=input)
@@ -87,22 +87,22 @@ Type `help(LeagueScheduler)` to show the full documentation.
 
 The league scheduler is also made available through a hosted [Streamlit application](https://leaguescheduler.streamlit.app).
 
-It has a more limited set of parameters (namely `n_iterations`, `m`, `R_max` and `penalties`) but can be used out of the box yet without logging. 
+It has a more limited set of parameters (namely `n_iterations`, `m`, `r_max` and `penalties`) but can be used out of the box yet without logging. 
 
 Additionally, the output file includes for every league and by team the distribution of the **number of adjusted rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
-If the app happens to be sleeping due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
+If the app happens to be sleeping due to inactivity 😴, just wake it up. You can run the app locally with `make web`.
 
 ### Timings
 
 How long does the scheduler take? This table sheds some baseline light:
 
-|                  | 13 teams | 4 teams  |
+|                  | 4 teams  | 13 teams |
 |------------------|--------- | -------- |
-| 10 iterations    | ~4s      | ~2s      |
-| 100 iterations   | ~5s      | ~3s      |
-| 1000 iterations  | ~22s     | ~18s     |
-| 10000 iterations | ~186s    | ~146s    |
+| 10 iterations    | ~2s      | ~4s      |
+| 100 iterations   | ~3s      | ~5s      |
+| 1000 iterations  | ~18s     | ~22s     |
+| 10000 iterations | ~146s    | ~186s    |
 
 _Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
 

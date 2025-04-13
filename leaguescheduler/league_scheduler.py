@@ -9,10 +9,7 @@ from .constants import LARGE_NBR, OUTPUT_COLS
 from .input_parser import InputParser
 from .params import SchedulerParams
 from .transportation_problem_solver import TransportationProblemSolver as TPS
-
-# NOTE: Below minor features of the algorithm are NOT YET IMPLEMENTED
-# Minimal cost change in tabu phase
-# Dealing with teams providing more than one home slot within 'R_max' slots
+from .utils import drop_nearby_points_from_array
 
 # NOTE: These are common reasons why a game remains unscheduled
 # No (or too little) home availabilities
@@ -73,7 +70,7 @@ class LeagueScheduler:
     - (C2) Each home team its availability set (H) is respected.
     - (C3) Each away team its unavailability set (A) is respected.
     - (C4) Each team plays at most one game per time slot.
-    - (C5) Each team plays at most 2 games in a period of 'R_max' time slots.
+    - (C5) Each team plays at most 2 games in a period of 'r_max' time slots.
     - (C6) There are minimum 'm' time slots between two games with the same teams (pairs).
 
     The implementation very closely follows the tabu search based algorithm from:
@@ -103,6 +100,8 @@ class LeagueScheduler:
         :param params: See SchedulerParams for parameter details.
         :param logger: (optional) Logger instance for logging purposes.
         """
+        assert input.parsed, "Input data not parsed yet!"
+
         # assign input data to carry along
         self.input = input
         self.tabu_length = params.tabu_length
@@ -114,13 +113,17 @@ class LeagueScheduler:
         X = np.eye(len(input.sets["teams"])) * LARGE_NBR  # diagonal is to be ignored
         self.X = np.where(X == 0, np.nan, X)
 
+        # differentiate between all possible home slots and those feasible
+        self.sets_home = input.sets["home"]
+        self.sets_home_feasible = self._get_feasible_home_slots(params.r_max)
+
         # initialize transportation object
         self.tps = TPS(
             sets_forbidden=input.sets["forbidden"],
-            sets_home=input.sets["home"],
+            sets_home=self.sets_home_feasible,
             m=params.m,
-            P=params.P,
-            R_max=params.R_max,
+            p=params.p,
+            r_max=params.r_max,
             penalties=params.penalties,
         )
 
@@ -198,6 +201,9 @@ class LeagueScheduler:
         iterations or until the full cost reaches zero. Every new optimal
         schedule is added to self.X.
 
+        Note that this implementation nowhere enforces a minimal cost change
+        before allowed to continue to the next iteration.
+
         :param progress_bar: A progress bar object, e.g., streamlit.progress(0.0).
         """
         X = self.X.copy()  # get current schedule
@@ -220,7 +226,7 @@ class LeagueScheduler:
 
             # check if current schedule needs to be perturbated
             if it % self.perturbation_length == 0:
-                # no better solution found
+                # perturbate if no better solution found for a while, else keep going
                 if (
                     self.list_full_costs[-1]
                     >= self.list_full_costs[-self.perturbation_length]
@@ -231,7 +237,7 @@ class LeagueScheduler:
 
                     # adjust costs based on dropped games from perturbation
                     n_unsched_pos = np.sum(np.isnan(X), axis=1)
-                    list_home_costs += (n_unsched_pos - n_unsched_pre) * self.tps.P
+                    list_home_costs += (n_unsched_pos - n_unsched_pre) * self.tps.p
 
             # recover team that has been tabu_length iterations in tabu list
             if it > self.tabu_length:
@@ -319,7 +325,9 @@ class LeagueScheduler:
 
         df_out[self.output_cols].to_excel(file, index=False)
 
-    def validate_calendar(self, df: pd.DataFrame) -> dict:
+    def validate_calendar(
+        self, df: pd.DataFrame, fl_net_rest_days: bool = False
+    ) -> dict:
         """Gathers a dictionary with validation data on the generated schedule."""
         d_val = {}
 
@@ -330,10 +338,11 @@ class LeagueScheduler:
         d_val["cost"] = min(self.list_full_costs)
 
         # overview of total number of home slots less than needed (per-team basis)
+        n_req_home_games = len(self.input.sets["teams"]) - 1
         n_home_slots_short = sum(
             [
-                max((len(self.input.sets["teams"]) - 1) - len(v), 0)
-                for _, v in self.input.sets["home"].items()
+                max(n_req_home_games - len(v), 0)
+                for _, v in self.sets_home_feasible.items()
             ]
         )
         d_val["missing_home_slots"] = n_home_slots_short
@@ -361,7 +370,7 @@ class LeagueScheduler:
         d_val["max_gap_pairs"] = df_days_diff_pairs["days_diff"].max()
 
         # overview of (adjusted) rest days in matrix form
-        d_val["df_rest_days"] = self.make_df_rest_days(df, net=True)
+        d_val["df_rest_days"] = self.make_df_rest_days(df, net=fl_net_rest_days)
 
         # overview of unused home slots
         d_val["df_unused_home_slots"] = self.make_df_unused_home_slots()
@@ -371,12 +380,12 @@ class LeagueScheduler:
 
         return d_val
 
-    def make_df_rest_days(self, df: pd.DataFrame, net: bool = True) -> pd.DataFrame:
+    def make_df_rest_days(self, df: pd.DataFrame, net: bool = False) -> pd.DataFrame:
         """
         Forms a matrix of teams vs. number of rest days for given input schedule.
 
         :param df: DataFrame with generated schedule.
-        :param net: If True, doesn't count team unavailabilities as a rest day.
+        :param net: If True, returns the adjusted rest days by not counting team unavailabilities as a rest day.
         """
         col_date = self.output_cols[0]
         col_home = self.output_cols[3]
@@ -454,7 +463,7 @@ class LeagueScheduler:
             unused_home_slots = sorted(
                 [
                     self.input.sets["slots"][s]
-                    for s in set(self.input.sets["home"][team_idx]).difference(
+                    for s in set(self.sets_home[team_idx]).difference(
                         set(self.X[team_idx, :])
                     )
                 ]
@@ -573,6 +582,17 @@ class LeagueScheduler:
     ### Class utils ##################
     ##################################
 
+    def _get_feasible_home_slots(self, r_max: int) -> dict:
+        """Returns a dictionary with feasible home slots per team."""
+        # NOTE: This deals with teams providing more than one home slot within
+        # 'r_max' slots by simply dropping the first slot per team
+        feasible_home_slots = {}
+        for team_idx, set_home in self.sets_home.items():
+            feasible_home_slots[team_idx] = drop_nearby_points_from_array(
+                set_home, r_max
+            )
+        return feasible_home_slots
+
     def _update_dict_available_spots(
         self,
         method: int,
@@ -581,7 +601,7 @@ class LeagueScheduler:
         team_idx_last: int = None,
     ) -> dict:
         """Updates available home/game spots for each team during construction phase."""
-        sets_home = self.input.sets["home"]
+        sets_home = self.sets_home
 
         if team_idx_last is not None:
             d_spots.pop(team_idx_last)  # drop last processed team
@@ -593,14 +613,14 @@ class LeagueScheduler:
             else:
                 # subtract current scheduled away games
                 d_spots = {
-                    key: v - np.sum(np.isin(sets_home[2], X[:, 2]))
+                    key: v - np.sum(np.isin(sets_home[key], X[:, key]))
                     for key, v in d_spots.items()
                 }
         elif method == 2:
             if d_spots is None:
                 d_spots = dict.fromkeys(self.input.sets["teams"])
             for team_idx in d_spots:
-                set_home = self.tps.sets_home[team_idx]
+                set_home = sets_home[team_idx]
                 opponents = [t for t in range(X.shape[0]) if t != team_idx]
 
                 m = self.tps.create_cost_matrix(X, team_idx, set_home, opponents)

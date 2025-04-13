@@ -25,12 +25,13 @@ def main(
     unavailable:  Annotated[str, typer.Option(help="Cell value to indicate that a team is unavailable.")] = "NIET",
     clip_bot: Annotated[int, typer.Option(help="Value for clipping rest days plot on low end.")] = 2,  # clips[0]
     clip_upp: Annotated[int, typer.Option(help="Value for clipping rest days plot on high end.")] = 20,  # clips[1]
+    net: Annotated[bool, typer.Option(help="Report the adjusted number of rest days.")] = False,
     tabu_length: Annotated[int, typer.Option(help="Number of iterations during which a team cannot be selected.")] = SchedulerParams.tabu_length,
     perturbation_length: Annotated[int, typer.Option(help="Check perturbation need every this many iterations.")] = SchedulerParams.perturbation_length,
     n_iterations: Annotated[int, typer.Option(help="Number of tabu phase iterations.")] = SchedulerParams.n_iterations,
     m: Annotated[int, typer.Option(help="Minimum number of time slots between 2 games with same pair of teams.")] = SchedulerParams.m,
-    p: Annotated[int, typer.Option(help="Cost from dummy supply node q to non-dummy demand node.")] = SchedulerParams.P,
-    r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = SchedulerParams.R_max,
+    p: Annotated[int, typer.Option(help="Cost from dummy supply node q to non-dummy demand node.")] = SchedulerParams.p,
+    r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = SchedulerParams.r_max,
     alpha: Annotated[float, typer.Option(help="Probability of picking perturbation operator 1.")] = SchedulerParams.alpha,
     beta: Annotated[float, typer.Option(help="Probability of removing a game in operator 1.")] = SchedulerParams.beta,
 ):
@@ -65,8 +66,8 @@ def main(
             perturbation_length=perturbation_length,
             n_iterations=n_iterations,
             m=m,
-            P=p,
-            R_max=r_max,
+            p=p,
+            r_max=r_max,
             penalties=penalties,
             alpha=alpha,
             beta=beta,
@@ -94,7 +95,7 @@ def main(
         scheduler.store_calendar(df, file=f"{output_folder}/{sheet_name}.xlsx")
         logger.info("Stored calendar")
 
-        d_val = scheduler.validate_calendar(df)
+        d_val = scheduler.validate_calendar(df, fl_net_rest_days=net)
         d_stats = gather_stats(d_val, d_stats)
         logger.info("Gathered validation info")
 

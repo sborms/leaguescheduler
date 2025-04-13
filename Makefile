@@ -26,7 +26,7 @@ experiment:
 		--input-file "experiments/input.xlsx" \
 		--output-folder "experiments/output" \
 		--seed 505 \
-		--n-iterations 2000 \
+		--n-iterations 100 \
 		--m 7 \
 		--p 1000 \
 		--r-max 5 \
