@@ -3,6 +3,9 @@ from munkres import DISALLOWED as D
 from munkres import Munkres
 
 from .constants import DISALLOWED_NBR
+from .params import SchedulerParams
+
+DEFAULTS = SchedulerParams()
 
 
 class TransportationProblemSolver:
@@ -12,10 +15,10 @@ class TransportationProblemSolver:
         self,
         sets_home: dict,
         sets_forbidden: dict,
-        m: int = 14,
-        p: int = 1000,
-        r_max: int = 4,
-        penalties: dict = None,
+        m: int = DEFAULTS.m,
+        p: int = DEFAULTS.p,
+        r_max: int = DEFAULTS.r_max,
+        penalties: dict[int, int] = DEFAULTS.penalties,
     ) -> None:
         """
         Initializes a new instance of the TransportationProblemSolver class.
@@ -94,7 +97,8 @@ class TransportationProblemSolver:
 
         games_team = np.concatenate((X[team_idx, :], X[:, team_idx]))
 
-        home_dates = np.array(list(set_home)) # C2 - home date availability
+        # C2 - home date availability
+        home_dates = np.array(list(set_home))
         home_dates_r = home_dates.reshape(-1, 1)  # convert into column vector Nx1
 
         # NOTE: Gets broadcasted into 1xK - Nx1 => NxK matrix such that

@@ -15,6 +15,8 @@ st.set_page_config(page_title="League Scheduler", page_icon="⚽📅", layout="w
 st.title("League Scheduler")
 st.markdown("#### Schedule your double round-robin leagues with ease")
 
+go = st.button("Schedule")
+
 row1 = st.container()
 main_col1, main_col2, main_col3 = row1.columns([4, 3, 2])
 
@@ -25,8 +27,13 @@ d_penalties = {}
 with main_col1:
     st.markdown("**Input file**")
 
+    st.info(
+        "One league per sheet with **NIET** for unavailability & (optional) a **penalties** sheet",
+        icon="ℹ️",
+    )
+
     file = st.file_uploader(
-        "One league per sheet (use **NIET** for unavailability) & optionally a **penalties** sheet",
+        "Provide input Excel sheet",
         type=["xlsx"],
     )
 
@@ -36,7 +43,7 @@ with main_col1:
         d_penalties = input.penalties
 
     # sheet names as checkboxes
-    n_sheet_cols, selected_sheets = 3, []
+    n_sheet_cols, selected_sheets = 4, []
     columns = st.columns(n_sheet_cols)
     for sheet_idx, sheet_name in enumerate(sheet_names):
         if columns[sheet_idx % n_sheet_cols].checkbox(sheet_name, value=True):
@@ -46,7 +53,7 @@ with main_col2:
     st.markdown("**Parameters**")
 
     m = st.number_input(
-        "**Min. rest days between pairs of games**",
+        "**Minimum rest days between reciprocal games**",
         min_value=0,
         max_value=100,
         value=6,
@@ -58,7 +65,7 @@ with main_col2:
         value=5,
     )
     n_iterations = st.number_input(
-        "**Max. number of iterations**",
+        "**Maximum number of iterations**",
         min_value=10,
         max_value=50000,
         value=1000,
@@ -90,8 +97,6 @@ st.markdown("---")
 output_col1, output_col2 = st.columns([2, 3])
 
 with output_col1:
-    go = st.button("Schedule")
-
     # perform scheduling
     output_sch, output_res, output_unu, output_tea = {}, {}, {}, {}
     if go:

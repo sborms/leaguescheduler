@@ -28,8 +28,6 @@ experiment:
 		--seed 505 \
 		--n-iterations 1000 \
 		--m 7 \
-		--p 1000 \
-		--r-max 5 \
 		--clip-bot 0 \
 		--clip-upp 50
 

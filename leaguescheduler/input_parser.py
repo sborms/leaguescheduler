@@ -19,6 +19,13 @@ class InputParser:
         - Cells with another value are considered the home slot hours, e.g., "20h30" (H).
         - Cells with no value are considered baseline available slots.
 
+        Optionally, a single sheet can be named 'penalties' and contain the penalties
+        for the algorithm. The penalties are read as a dictionary with the number of
+        days as keys (column 1) and the penalties as values (column 2). In this case,
+        the number of days is defined as the exact number of rest days. This class
+        internally adds 1 to each key so it conforms to the rest days + 1 convention
+        used in SchedulerParams.penalties.
+
         :param filename: Path location where input Excel file is stored.
         :param unavailable: Cell value to indicate that a team is unavailable.
         """

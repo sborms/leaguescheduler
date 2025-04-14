@@ -15,6 +15,8 @@ from leaguescheduler.utils import gather_stats, setup_logger
 
 app = typer.Typer()
 
+DEFAULTS = SchedulerParams()
+
 
 # fmt: off
 @app.command()
@@ -26,14 +28,14 @@ def main(
     clip_bot: Annotated[int, typer.Option(help="Value for clipping rest days plot on low end.")] = 2,  # clips[0]
     clip_upp: Annotated[int, typer.Option(help="Value for clipping rest days plot on high end.")] = 20,  # clips[1]
     net: Annotated[bool, typer.Option(help="Report the adjusted number of rest days.")] = False,
-    tabu_length: Annotated[int, typer.Option(help="Number of iterations during which a team cannot be selected.")] = SchedulerParams.tabu_length,
-    perturbation_length: Annotated[int, typer.Option(help="Check perturbation need every this many iterations.")] = SchedulerParams.perturbation_length,
-    n_iterations: Annotated[int, typer.Option(help="Number of tabu phase iterations.")] = SchedulerParams.n_iterations,
-    m: Annotated[int, typer.Option(help="Minimum number of time slots between 2 games with same pair of teams.")] = SchedulerParams.m,
-    p: Annotated[int, typer.Option(help="Cost from dummy supply node q to non-dummy demand node.")] = SchedulerParams.p,
-    r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = SchedulerParams.r_max,
-    alpha: Annotated[float, typer.Option(help="Probability of picking perturbation operator 1.")] = SchedulerParams.alpha,
-    beta: Annotated[float, typer.Option(help="Probability of removing a game in operator 1.")] = SchedulerParams.beta,
+    tabu_length: Annotated[int, typer.Option(help="Number of iterations during which a team cannot be selected.")] = DEFAULTS.tabu_length,
+    perturbation_length: Annotated[int, typer.Option(help="Check perturbation need every this many iterations.")] = DEFAULTS.perturbation_length,
+    n_iterations: Annotated[int, typer.Option(help="Number of tabu phase iterations.")] = DEFAULTS.n_iterations,
+    m: Annotated[int, typer.Option(help="Minimum number of time slots between 2 games with same pair of teams.")] = DEFAULTS.m,
+    p: Annotated[int, typer.Option(help="Cost from dummy supply node q to non-dummy demand node.")] = DEFAULTS.p,
+    r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = DEFAULTS.r_max,
+    alpha: Annotated[float, typer.Option(help="Probability of picking perturbation operator 1.")] = DEFAULTS.alpha,
+    beta: Annotated[float, typer.Option(help="Probability of removing a game in operator 1.")] = DEFAULTS.beta,
 ):
     # fmt: on
     if seed is not None:
@@ -52,7 +54,7 @@ def main(
 
     d_stats = None
     input = InputParser(input_file, unavailable=unavailable)
-    penalties = input.penalties
+    penalties = input.penalties or SchedulerParams().penalties
 
     for sheet_name in input.sheet_names:
         logger.info(f"PROCESSING LEAGUE > {sheet_name}")
