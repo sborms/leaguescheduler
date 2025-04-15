@@ -16,7 +16,7 @@ freeze:
 
 example:
 	cmd /c rmdir /s /q example_output
-	2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 321 --n-iterations 500
+	uv run 2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 321 --n-iterations 500
 
 web:
 	uv run streamlit run app.py
