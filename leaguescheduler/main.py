@@ -25,8 +25,8 @@ def main(
     output_folder: Annotated[str, typer.Option(help="Folder where the outputs (logs, overview, schedules) will be stored.")],
     seed: Annotated[int, typer.Option(help="Optional seed for np.random.seed().")] = None,
     unavailable:  Annotated[str, typer.Option(help="Cell value to indicate that a team is unavailable.")] = "NIET",
-    clip_bot: Annotated[int, typer.Option(help="Value for clipping rest days plot on low end.")] = 2,  # clips[0]
-    clip_upp: Annotated[int, typer.Option(help="Value for clipping rest days plot on high end.")] = 20,  # clips[1]
+    clip_bot: Annotated[int, typer.Option(help="Value for clipping rest days plot on low end.")] = DEFAULTS.r_max - 2 - 1,  # 1 less than implied min. rest days
+    clip_upp: Annotated[int, typer.Option(help="Value for clipping rest days plot on high end.")] = 41,
     net: Annotated[bool, typer.Option(help="Report the adjusted number of rest days.")] = False,
     tabu_length: Annotated[int, typer.Option(help="Number of iterations during which a team cannot be selected.")] = DEFAULTS.tabu_length,
     perturbation_length: Annotated[int, typer.Option(help="Check perturbation need every this many iterations.")] = DEFAULTS.perturbation_length,

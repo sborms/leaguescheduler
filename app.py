@@ -8,14 +8,18 @@ from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 from leaguescheduler.constants import OUTPUT_COLS
 from leaguescheduler.utils import download_output, gather_stats
 
-P = 1000
+DEFAULTS = SchedulerParams()
 
 st.set_page_config(page_title="League Scheduler", page_icon="⚽📅", layout="wide")
 
-st.title("League Scheduler")
-st.markdown("#### Schedule your double round-robin leagues with ease")
 
-go = st.button("Schedule")
+row0 = st.container()
+header_col_1, header_col_2 = row0.columns([0.925, 0.075])
+header_col_1.markdown(
+    "### 📅 League Scheduler &mdash; Easily Schedule Double Round-Robin (2RR) Leagues"
+)
+
+go = header_col_2.button("Schedule")
 
 row1 = st.container()
 main_col1, main_col2, main_col3 = row1.columns([4, 3, 2])
@@ -28,7 +32,7 @@ with main_col1:
     st.markdown("**Input file**")
 
     st.info(
-        "One league per sheet with **NIET** for unavailability & (optional) a **penalties** sheet",
+        "Have one league per sheet and use **NIET** for unavailability (see [example input](https://github.com/sborms/leaguescheduler/blob/main/example_input.xlsx))",
         icon="ℹ️",
     )
 
@@ -52,45 +56,59 @@ with main_col1:
 with main_col2:
     st.markdown("**Parameters**")
 
-    m = st.number_input(
-        "**Minimum rest days between reciprocal games**",
-        min_value=0,
-        max_value=100,
-        value=6,
-    )
-    r_max = st.number_input(
-        "**Required days for 2 games of same team**",
-        min_value=2,
-        max_value=20,
-        value=5,
-    )
-    n_iterations = st.number_input(
-        "**Maximum number of iterations**",
-        min_value=10,
-        max_value=50000,
-        value=1000,
+    st.info(
+        "See `help(SchedulerParams)` for documentation",
+        icon="ℹ️",
     )
 
-    main_col2_sub_col1, main_col2_sub_col2 = main_col2.columns([1, 1])
-    unscheduled_date = main_col2_sub_col1.text_input(
+    main_col2_sub_col1, main_col2_sub_col2, main_col2_sub_col3 = main_col2.columns(
+        [1, 1, 1]
+    )
+    m = main_col2_sub_col1.number_input(
+        "**Min. rest days (pairs)**",
+        min_value=0,
+        max_value=100,
+        value=DEFAULTS.m - 1,
+    )
+    r_max = main_col2_sub_col2.number_input(
+        "**Min. rest days**",
+        min_value=2,
+        max_value=20,
+        value=DEFAULTS.r_max - 2,
+    )
+    n_iterations = main_col2_sub_col3.number_input(
+        "**Max. iterations**",
+        min_value=10,
+        max_value=50000,
+        value=DEFAULTS.n_iterations,
+    )
+
+    main_col2_sub_col3, main_col2_sub_col4 = main_col2.columns([1, 1])
+    unscheduled_date = main_col2_sub_col3.text_input(
         "**Unscheduled date**",
         value="31/07/2025",
     )
 
-    unscheduled_hour = main_col2_sub_col2.text_input(
+    unscheduled_hour = main_col2_sub_col4.text_input(
         "**Unscheduled hour**",
         value="00u",
     )
 
 main_col3.markdown("**Penalties**", unsafe_allow_html=True)
+main_col3.info(
+    "Provide as **penalties** sheet in input",
+    icon="ℹ️",
+)
+
 if not d_penalties:
-    main_col3.markdown("No penalties provided in input.")
-else:
-    df_penalties = pd.DataFrame.from_dict(
-        d_penalties, orient="index", columns=["Penalty"]
-    ).rename_axis("Rest day")
-    df_penalties.index = df_penalties.index - 1  # rest days = n_days - 1 for display
-    main_col3.dataframe(df_penalties, use_container_width=True)
+    main_col3.markdown("No input, using defaults")
+    d_penalties = DEFAULTS.penalties
+
+df_penalties = pd.DataFrame.from_dict(
+    d_penalties, orient="index", columns=["Penalty"]
+).rename_axis("Rest day")
+df_penalties.index = df_penalties.index - 1  # rest days = n_days - 1 for display
+main_col3.dataframe(df_penalties, use_container_width=True, height=5 * 35 + 3)
 
 st.markdown("---")
 
@@ -114,10 +132,9 @@ with output_col1:
                 input.parse()
 
                 params = SchedulerParams(
-                    p=P,
                     n_iterations=n_iterations,
                     m=m + 1,  # from rest days to time slots
-                    r_max=r_max,
+                    r_max=r_max + 2,  # from rest days to time slots
                     penalties=d_penalties,
                 )
 
@@ -165,7 +182,13 @@ with output_col2:
         df_stats = df_stats.astype(int)
 
         # remove cost of unfeasible schedules
-        df_stats["cost"] = df_stats["cost"] - (df_stats["missing_home_slots"] * P)
+        df_stats["cost"] = df_stats["cost"] - (
+            df_stats["missing_home_slots"] * DEFAULTS.p
+        )
+
+        # show summary table
+        st.markdown("**Summary**")
+        st.table(df_stats)
 
         # download output file with schedules and additional info
         st.download_button(
@@ -176,9 +199,6 @@ with output_col2:
             file_name=f"{'_'.join(selected_sheets)}_{datetime.now().strftime('%Y%m%d')}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
-
-        st.markdown("**Summary**")
-        st.table(df_stats)
 
         st.markdown(
             "_Once you download the schedules, the shown output will disappear._"

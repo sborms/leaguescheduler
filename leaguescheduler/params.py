@@ -1,15 +1,14 @@
 from dataclasses import dataclass, field
 
 DEFAULT_COST = 1000
+DEFAULT_R_MAX = 4
 
 DEFAULT_PENALTIES = {}
-DEFAULT_PENALTIES.update(
-    {k + 1: 5 for k in range(3, 7)}
-)  # <1 week (R_max deals with small values)
+DEFAULT_PENALTIES.update({k + 1: 5 for k in range(DEFAULT_R_MAX - 2, 7)})  # <1 week
 DEFAULT_PENALTIES.update({k + 1: 0 for k in range(7, 14)})  # <2 weeks
 DEFAULT_PENALTIES.update({k + 1: 3 for k in range(14, 21)})  # 2-3 weeks
 DEFAULT_PENALTIES.update({k + 1: 10 for k in range(21, 42)})  # 3-6 weeks
-DEFAULT_PENALTIES.update({k + 1: DEFAULT_COST + 10 for k in range(42, 364)})  # >6 weeks
+# DEFAULT_PENALTIES.update({k + 1: DEFAULT_COST + 10 for k in range(42, 364)})  # >6 weeks
 
 
 @dataclass
@@ -36,9 +35,9 @@ class SchedulerParams:
     tabu_length: int = 4
     perturbation_length: int = 50
     n_iterations: int = 1000
-    m: int = 14
+    m: int = 7
     p: int = DEFAULT_COST
-    r_max: int = 5
+    r_max: int = DEFAULT_R_MAX
     penalties: dict[int, int] = field(default_factory=lambda: DEFAULT_PENALTIES.copy())
     alpha: float = 0.5
     beta: float = 0.01

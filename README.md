@@ -51,9 +51,8 @@ You can use the scheduler from the command line as follows:
 2rr \
 --input_file "example_input.xlsx" \
 --output_folder "example_output" \
---seed 505 \
---n_iterations 100 \
---clip_upp 40
+--seed 321 \
+--n_iterations 500
 ```
 
 Alternatively, you can execute `make example` which runs the above example.
@@ -87,7 +86,7 @@ Type `help(LeagueScheduler)` to show the full documentation.
 
 The league scheduler is also made available through a hosted [Streamlit application](https://leaguescheduler.streamlit.app).
 
-It has a more limited set of parameters (namely `n_iterations`, `m`, `r_max` and `penalties`) but can be used out of the box yet without logging. 
+It has a more limited set of parameters (namely `m`, `r_max`, `n_iterations`, and `penalties`) but can be used out of the box yet without logging. 
 
 Additionally, the output file includes for every league and by team the distribution of the **number of adjusted rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
