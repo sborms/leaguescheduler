@@ -12,17 +12,16 @@ DEFAULTS = SchedulerParams()
 
 st.set_page_config(page_title="League Scheduler", page_icon="⚽📅", layout="wide")
 
+st.markdown("## 📅 League Scheduler")
 
 row0 = st.container()
 header_col_1, header_col_2 = row0.columns([0.925, 0.075])
-header_col_1.markdown(
-    "### 📅 League Scheduler &mdash; Easily Schedule Double Round-Robin (2RR) Leagues"
-)
 
+header_col_1.markdown("#### Easily Schedule Double Round-Robin (2RR) Leagues")
 go = header_col_2.button("Schedule")
 
 row1 = st.container()
-main_col1, main_col2, main_col3 = row1.columns([4, 3, 2])
+main_col1, main_col2, main_col3 = row1.columns([0.425, 0.35, 0.225])
 
 # variables that require to be set upfront
 sheet_names = []
@@ -32,7 +31,7 @@ with main_col1:
     st.markdown("**Input file**")
 
     st.info(
-        "Have one league per sheet and use **NIET** for unavailability (see [example input](https://github.com/sborms/leaguescheduler/blob/main/example_input.xlsx))",
+        "One league per sheet, and use **NIET** for unavailability ([example](https://github.com/sborms/leaguescheduler/blob/main/example_input.xlsx))",
         icon="ℹ️",
     )
 
@@ -57,7 +56,7 @@ with main_col2:
     st.markdown("**Parameters**")
 
     st.info(
-        "See `help(SchedulerParams)` for documentation",
+        "See `help(SchedulerParams)` for full parametrization",
         icon="ℹ️",
     )
 
@@ -65,19 +64,19 @@ with main_col2:
         [1, 1, 1]
     )
     m = main_col2_sub_col1.number_input(
-        "**Min. rest days (pairs)**",
+        "**Rest days pairs** (`m - 1`)",
         min_value=0,
         max_value=100,
         value=DEFAULTS.m - 1,
     )
     r_max = main_col2_sub_col2.number_input(
-        "**Min. rest days**",
+        "**Rest days** (`r_max - 2`)",
         min_value=2,
         max_value=20,
         value=DEFAULTS.r_max - 2,
     )
     n_iterations = main_col2_sub_col3.number_input(
-        "**Max. iterations**",
+        "**Maximum iterations**",
         min_value=10,
         max_value=50000,
         value=DEFAULTS.n_iterations,
@@ -97,7 +96,7 @@ with main_col2:
 main_col3.markdown("**Penalties**", unsafe_allow_html=True)
 main_col3.info(
     "Provide as **penalties** sheet in input",
-    icon="ℹ️",
+    icon="📌",
 )
 
 if not d_penalties:
