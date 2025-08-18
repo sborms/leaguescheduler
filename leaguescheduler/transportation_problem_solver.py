@@ -84,10 +84,6 @@ class TransportationProblemSolver:
 
         return X, total_cost
 
-    def _get_team_array(self, X: np.ndarray, idx: int) -> np.ndarray:
-        arr = np.concatenate((X[idx, :], X[:, idx]))
-        return arr[arr != LARGE_NBR]
-
     # fmt: off
     def create_cost_matrix(
         self,
@@ -174,3 +170,7 @@ class TransportationProblemSolver:
     def get_total_cost(self, indexes: list[tuple[int, int]], am: list) -> float:
         """Returns total cost in adjacency matrix from optimal indexes."""
         return sum([am[row][column] for row, column in indexes])
+
+    def _get_team_array(self, X: np.ndarray, idx: int) -> np.ndarray:
+        arr = np.concatenate((X[idx, :], X[:, idx]))
+        return arr[arr != LARGE_NBR]
