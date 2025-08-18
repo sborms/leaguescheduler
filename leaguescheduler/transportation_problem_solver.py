@@ -2,7 +2,7 @@ import numpy as np
 from munkres import DISALLOWED as D
 from munkres import Munkres
 
-from .constants import DISALLOWED_NBR
+from .constants import DISALLOWED_NBR, LARGE_NBR
 from .params import SchedulerParams
 
 DEFAULTS = SchedulerParams()
@@ -84,6 +84,10 @@ class TransportationProblemSolver:
 
         return X, total_cost
 
+    def _get_team_array(self, X: np.ndarray, idx: int) -> np.ndarray:
+        arr = np.concatenate((X[idx, :], X[:, idx]))
+        return arr[arr != LARGE_NBR]
+
     # fmt: off
     def create_cost_matrix(
         self,
@@ -95,7 +99,7 @@ class TransportationProblemSolver:
         """Creates costs in adjacency matrix based on current schedule & constraints."""
         am_cost = np.zeros((len(set_home), len(opponents)))
 
-        games_team = np.concatenate((X[team_idx, :], X[:, team_idx]))
+        games_team = self._get_team_array(X, team_idx)
 
         # C2 - home date availability
         home_dates = np.array(list(set_home))
@@ -109,10 +113,11 @@ class TransportationProblemSolver:
         team_plays_mask = np.isin(home_dates, games_team)
 
         # C5 - cf. below
-        games_in_r_max_team = (games_team_d < self.r_max).sum(axis=1) > 0  # NOTE: Sums across columns to get info per available home slot
+        # NOTE: Sums across columns to get info per available home slot
+        games_in_r_max_team = (games_team_d < self.r_max).sum(axis=1) > 0
 
         for j, oppo_idx in enumerate(opponents):
-            games_oppo = np.concatenate((X[oppo_idx, :], X[:, oppo_idx]))
+            games_oppo = self._get_team_array(X, oppo_idx)
 
             # C3 - forbidden game set
             forbidden_mask = np.array([h in self.sets_forbidden[oppo_idx] for h in home_dates], dtype=bool)
@@ -130,6 +135,8 @@ class TransportationProblemSolver:
             reciprocal_game_mask = np.abs(home_dates - X[oppo_idx, team_idx]) < self.m
 
             # set disallowed cost for all disallowed slots at once
+            # NOTE: This does not take into account the time slot differences between the hereafter
+            # picked home slots (e.g. two home slots within r_max -> _get_feasible_home_slots)
             disallowed = (
                 forbidden_mask |
                 team_plays_mask |
@@ -156,7 +163,8 @@ class TransportationProblemSolver:
                         # only positive values respect direction, then take minimum
                         delta_pos = delta[delta > 0]
                         if delta_pos.size > 0:
-                            penalties += self.penalties.get(delta_pos.min(), 0)
+                            min_delta_pos = delta_pos.min()
+                            penalties += self.penalties.get(min_delta_pos, 0)
 
                     am_cost[i, j] = penalties
 

@@ -65,13 +65,13 @@ with main_col2:
     )
     m = main_col2_sub_col1.number_input(
         "**Rest days pairs** (`m - 1`)",
-        min_value=0,
+        min_value=0,  # m = 1
         max_value=100,
         value=DEFAULTS.m - 1,
     )
     r_max = main_col2_sub_col2.number_input(
         "**Rest days** (`r_max - 2`)",
-        min_value=2,
+        min_value=0,  # r_max = 2
         max_value=20,
         value=DEFAULTS.r_max - 2,
     )
