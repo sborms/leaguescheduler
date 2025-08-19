@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from .constants import LARGE_NBR, OUTPUT_COLS
+from .constants import LARGE_NBR, MAX_ALLOWED_REST_DAYS, OUTPUT_COLS
 from .input_parser import InputParser
 from .params import SchedulerParams
 from .transportation_problem_solver import TransportationProblemSolver as TPS
@@ -132,6 +132,9 @@ class LeagueScheduler:
 
         # initialize output columns
         self.output_cols = OUTPUT_COLS
+
+        # track top X matrices with lowest cost as a list of dicts {"cost": float, "X": np.ndarray}
+        self.top_X = []
 
     def construction_phase(self) -> None:
         """Generates initial (possibly incomplete) schedule and assigns it to self.X."""
@@ -268,13 +271,19 @@ class LeagueScheduler:
                 )
                 self.X = X.copy()  # update to new optimal schedule
 
+            # always update top_X with current X and cost
+            self._update_top_X(full_cost, X)
+            df_r = self._extract_rest_days_from_X(X)
+            print(df_r)
+
         # set progress bar to 100% (needed in case of early termination)
         if progress_bar is not None:
             progress_bar.progress(1.0)
 
-    def create_calendar(self) -> pd.DataFrame:
+    def create_calendar(self, X: np.ndarray = None) -> pd.DataFrame:
         """Creates a calendar DataFrame from the optimal schedule."""
-        X = self.X
+        X = X if X is not None else self.X
+
         core = self.input.core
         teams = self.input.sets["teams"]
         locations = self.input.locations
@@ -326,7 +335,10 @@ class LeagueScheduler:
         df_out[self.output_cols].to_excel(file, index=False)
 
     def validate_calendar(
-        self, df: pd.DataFrame, fl_net_rest_days: bool = False
+        self,
+        df: pd.DataFrame,
+        fl_net_rest_days: bool = False,
+        cost: float = None,
     ) -> dict:
         """Gathers a dictionary with validation data on the generated schedule."""
         d_val = {}
@@ -335,7 +347,10 @@ class LeagueScheduler:
         d_val["teams"] = len(self.input.sets["teams"])
         d_val["games"] = len(df)
         d_val["unscheduled"] = sum(df[self.output_cols[0]].isna())
-        d_val["cost"] = min(self.list_full_costs)
+
+        if cost is None:
+            cost = min(self.list_full_costs)
+        d_val["cost"] = cost
 
         # overview of total number of home slots less than needed (per-team basis)
         n_req_home_games = len(self.input.sets["teams"]) - 1
@@ -370,7 +385,14 @@ class LeagueScheduler:
         d_val["max_gap_pairs"] = df_days_diff_pairs["days_diff"].max()
 
         # overview of (adjusted) rest days in matrix form
-        d_val["df_rest_days"] = self.make_df_rest_days(df, net=fl_net_rest_days)
+        df_rest_days = self.make_df_rest_days(df, net=fl_net_rest_days)
+        d_val["df_rest_days"] = df_rest_days
+
+        # overview of max rest days
+        series_n_total_rest_days = df_rest_days.loc["TOTAL"]
+        d_val["n_too_many_rest_days"] = series_n_total_rest_days[
+            series_n_total_rest_days.index > MAX_ALLOWED_REST_DAYS
+        ].sum()
 
         # overview of unused home slots
         d_val["df_unused_home_slots"] = self.make_df_unused_home_slots()
@@ -685,5 +707,54 @@ class LeagueScheduler:
             ),
             axis=1,
         )
+
+        return df
+
+    def _update_top_X(self, cost: float, X: np.ndarray, n: int = 10) -> None:
+        """
+        Adds the current X and cost to self.top_X if it belongs in the top 'n' lowest costs.
+        Keeps self.top_X sorted by ascending const with max length 'n'.
+        """
+        entry = {"cost": cost, "X": np.copy(X)}
+        self.top_X.append(entry)
+        self.top_X.sort(key=lambda e: e["cost"])
+        if len(self.top_X) > n:
+            self.top_X = self.top_X[:n]
+
+    def _extract_rest_days_from_X(self, X: np.ndarray) -> pd.DataFrame:
+        """
+        Computes a rest days matrix directly from the X schedule matrix.
+        Rows: teams, Columns: number of rest days, Values: count of occurrences.
+        Matches the output of make_df_rest_days but uses X as input.
+        """
+        teams = list(self.input.sets["teams"].values())
+        n_teams = len(teams)
+
+        rest_days_dict = {team: [] for team in teams}
+        for idx in range(n_teams):
+            home_slots = [
+                X[idx, j]
+                for j in range(n_teams)
+                if idx != j and not np.isnan(X[idx, j])
+            ]
+            away_slots = [
+                X[i, idx]
+                for i in range(n_teams)
+                if idx != i and not np.isnan(X[i, idx])
+            ]
+            all_slots = sorted([int(s) for s in home_slots + away_slots])
+
+            rest_days = [
+                all_slots[i] - all_slots[i - 1] - 1 for i in range(1, len(all_slots))
+            ]
+            rest_days_dict[teams[idx]] = rest_days
+
+        all_rest_days = sorted(set(rd for rds in rest_days_dict.values() for rd in rds))
+        df = pd.DataFrame(0, index=teams, columns=all_rest_days)
+        for team, rds in rest_days_dict.items():
+            for rd in rds:
+                df.at[team, rd] += 1
+
+        df.loc["TOTAL"] = df.sum(axis=0)
 
         return df

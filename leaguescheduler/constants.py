@@ -5,3 +5,6 @@ LARGE_NBR = 9999
 
 # NOTE: The order of columns should stay date - time - location - home - away!
 OUTPUT_COLS = ["Date", "Hour", "Location", "Home", "Away"]
+
+# NOTE: Can be both regular/adjusted rest days
+MAX_ALLOWED_REST_DAYS = 28

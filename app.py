@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
-from leaguescheduler.constants import OUTPUT_COLS
+from leaguescheduler.constants import MAX_ALLOWED_REST_DAYS, OUTPUT_COLS
 from leaguescheduler.utils import download_output, gather_stats
 
 DEFAULTS = SchedulerParams()
@@ -124,6 +124,7 @@ with output_col1:
 
             d_stats = None
 
+            index_table = []
             for sheet_name in selected_sheets:
                 st.markdown(f"Scheduling league **{sheet_name}**")
 
@@ -154,6 +155,21 @@ with output_col1:
                 d_val = scheduler.validate_calendar(df, fl_net_rest_days=True)
                 d_stats = gather_stats(d_val, d_stats)
 
+                # gather info for top calendars
+                top_X, lst_all_calendars = scheduler.top_X, []
+                # NOTE: Drop first because this is the optimal solution
+                for _, d_X in enumerate(top_X[1:], start=1):
+                    cost, X = d_X["cost"], d_X["X"]
+
+                    _df = scheduler.create_calendar(X)
+                    lst_all_calendars.append(_df)
+
+                    d_val = scheduler.validate_calendar(
+                        _df, fl_net_rest_days=True, cost=cost
+                    )
+                    d_stats = gather_stats(d_val, d_stats)
+                index_table.append([sheet_name] * len(top_X))
+
                 # store calendar output
                 df_out = df[OUTPUT_COLS].copy()
                 df_out[OUTPUT_COLS[0]] = df_out[OUTPUT_COLS[0]].dt.strftime("%d/%m/%Y")
@@ -177,7 +193,7 @@ with output_col1:
 
 with output_col2:
     if len(output_sch) > 0:
-        df_stats = pd.DataFrame(d_stats, index=selected_sheets)
+        df_stats = pd.DataFrame(d_stats, index=index_table)
         df_stats = df_stats.astype(int)
 
         # remove cost of unfeasible schedules
@@ -187,6 +203,7 @@ with output_col2:
 
         # show summary table
         st.markdown("**Summary**")
+        st.markdown(f"Rest days threshold: {MAX_ALLOWED_REST_DAYS}")
         st.table(df_stats)
 
         # download output file with schedules and additional info
