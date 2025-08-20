@@ -36,7 +36,7 @@ class SchedulerParams:
 
     tabu_length: int = 4
     perturbation_length: int = 50
-    n_iterations: int = 1000
+    n_iterations: int = 10000
     m: int = 7
     p: int = DEFAULT_COST
     r_max: int = DEFAULT_R_MAX

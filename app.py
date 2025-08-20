@@ -86,7 +86,7 @@ with main_col2:
     main_col2_sub_col3, main_col2_sub_col4 = main_col2.columns([1, 1])
     unscheduled_date = main_col2_sub_col3.text_input(
         "**Unscheduled date**",
-        value="31/07/2025",
+        value="31/07/2026",
     )
 
     unscheduled_hour = main_col2_sub_col4.text_input(
