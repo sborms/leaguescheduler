@@ -11,7 +11,7 @@ If you are looking to schedule a sports league with at least the following const
 
 ... then this will help you!
 
-This software implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently. Some tricks and specifics were added left and right, especially to minimize the occurrence of teams with an excessive number rest days (internally fixed at 28) between their games.
+This software implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm as implemented in the [`munkres` package](https://software.clapper.org/munkres), to solve the transportation problem recurrently. Additionally, some tricks were added throughout, especially to minimize excessive rest days (internally fixed at 28) between consecutive games of teams.
 
 # Installation
 
