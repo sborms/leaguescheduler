@@ -107,6 +107,7 @@ class LeagueScheduler:
         self.tabu_length = params.tabu_length
         self.perturbation_length = params.perturbation_length
         self.n_iterations = params.n_iterations
+        self.cost_excessive_rest_days = params.cost_excessive_rest_days
         self.logger = logger
 
         # initialize target matrix with teams & slots
@@ -136,10 +137,20 @@ class LeagueScheduler:
         # track top X matrices with lowest cost as a list of dicts {"cost": float, "X": np.ndarray}
         self.top_X = []
 
+        # handy precomputed variables
+        self.n_teams = len(self.input.sets["teams"])
+        self.teams_without_home_slots = self._get_teams_without_home_slots(
+            self.sets_home_feasible
+        )
+        self.teams_without_home_slots_names = [
+            self.input.sets["teams"][team_idx]
+            for team_idx in self.teams_without_home_slots
+        ]
+
     def construction_phase(self) -> None:
         """Generates initial (possibly incomplete) schedule and assigns it to self.X."""
         X = self.X
-        n_teams = len(self.input.sets["teams"])
+        n_teams = self.n_teams
 
         # initialize list with costs per home team
         self.list_home_costs = [None] * n_teams
@@ -161,6 +172,7 @@ class LeagueScheduler:
             d_spots1 = self._update_dict_available_spots(1, X1, d_spots1, team_idx)
 
         cost1 = sum(list_home_costs1)
+        cost1 += self._count_excessive_rest_days(X1) * self.cost_excessive_rest_days
         self.logger.info(f"Initialized schedule using method 1 with cost {cost1}")
 
         # method 2
@@ -180,6 +192,7 @@ class LeagueScheduler:
             d_spots2 = self._update_dict_available_spots(2, X2, d_spots2, team_idx)
 
         cost2 = sum(list_home_costs2)
+        cost2 += self._count_excessive_rest_days(X2) * self.cost_excessive_rest_days
         self.logger.info(f"Initialized schedule using method 2 with cost {cost2}")
 
         # NOTE: Home costs don't take into account later assigned games but the tabu
@@ -188,12 +201,16 @@ class LeagueScheduler:
         # there is always a slight delay between the actual cost and the reported cost
 
         # pick best method to set schedule after construction phase
+        self.logger.info(f"Comparing costs {cost1} vs. {cost2}")
         if cost1 < cost2:
             self.logger.info("Initialization method 1 is best")
             self.X, self.list_home_costs = X1, list_home_costs1
         else:
             self.logger.info("Initialization method 2 is best")
             self.X, self.list_home_costs = X2, list_home_costs2
+
+        # initialize list with full costs
+        self.list_full_costs = [cost1 if cost1 < cost2 else cost2]
 
     def tabu_phase(
         self, progress_bar: st.delta_generator.DeltaGenerator = None
@@ -213,8 +230,6 @@ class LeagueScheduler:
 
         list_home_costs = self.list_home_costs.copy()
 
-        # initialize list with full costs at end of every iteration
-        self.list_full_costs = [sum(list_home_costs)]
         full_cost_min = self.list_full_costs[-1]
         self.logger.info(f"Tabu phase starts with cost {full_cost_min}")
 
@@ -224,6 +239,7 @@ class LeagueScheduler:
         it = 0
         while it < self.n_iterations and self.list_full_costs[-1] > 0:
             it += 1
+            # self.logger.info(f"Iteration {it}")
             if progress_bar is not None:
                 progress_bar.progress(it / self.n_iterations)
 
@@ -251,30 +267,35 @@ class LeagueScheduler:
             team_idx = np.random.choice(list_nontabu)
             list_tabu.append(team_idx)
             list_nontabu.remove(team_idx)
+            # self.logger.info(f"Picked team: {self.input.sets['teams'][team_idx]} ({team_idx})")
 
             # reschedule home games of picked team
             X[team_idx, :] = np.nan
             X[team_idx, team_idx] = LARGE_NBR
 
-            X, total_cost = self.tps.solve(X, team_idx)  # solver
+            X, total_cost = self.tps.solve(X, team_idx)
 
-            # update costs
+            # update costs, first including the cost for the excessive rest days
             list_home_costs[team_idx] = total_cost
-            full_cost = sum(list_home_costs)
+            n_excessive_rest_days = self._count_excessive_rest_days(X)
+
+            full_cost = (
+                sum(list_home_costs)
+                + n_excessive_rest_days * self.cost_excessive_rest_days
+            )
             self.list_full_costs.append(full_cost)
 
-            # check quality
-            if full_cost < full_cost_min:  # new best
-                full_cost_min = full_cost
-                self.logger.info(
-                    f"New best at iteration {it} with cost {full_cost_min}"
-                )
-                self.X = X.copy()  # update to new optimal schedule
-
-            # always update top_X with current X and cost
+            # update top_X with current X and cost
             self._update_top_X(full_cost, X)
-            df_r = self._extract_rest_days_from_X(X)
-            print(df_r)
+
+            # check quality
+            # self.logger.info(f"Iteration {it:>5}  ->  Cost = {full_cost:}")
+            if full_cost < full_cost_min:  # new best
+                self.logger.info(
+                    f"!!! New best at iteration {it:>5} -> {full_cost:>9.1f} < {full_cost_min:<9.1f} | Rest days = {n_excessive_rest_days}"
+                )
+                full_cost_min = full_cost
+                self.X = X.copy()  # update to new optimal schedule
 
         # set progress bar to 100% (needed in case of early termination)
         if progress_bar is not None:
@@ -341,10 +362,12 @@ class LeagueScheduler:
         cost: float = None,
     ) -> dict:
         """Gathers a dictionary with validation data on the generated schedule."""
+        teams = self.input.sets["teams"]
+
         d_val = {}
 
         # grab some general statistics first
-        d_val["teams"] = len(self.input.sets["teams"])
+        d_val["teams"] = len(teams)
         d_val["games"] = len(df)
         d_val["unscheduled"] = sum(df[self.output_cols[0]].isna())
 
@@ -353,7 +376,7 @@ class LeagueScheduler:
         d_val["cost"] = cost
 
         # overview of total number of home slots less than needed (per-team basis)
-        n_req_home_games = len(self.input.sets["teams"]) - 1
+        n_req_home_games = len(teams) - 1
         n_home_slots_short = sum(
             [
                 max(n_req_home_games - len(v), 0)
@@ -388,17 +411,24 @@ class LeagueScheduler:
         df_rest_days = self.make_df_rest_days(df, net=fl_net_rest_days)
         d_val["df_rest_days"] = df_rest_days
 
-        # overview of max rest days
-        series_n_total_rest_days = df_rest_days.loc["TOTAL"]
-        d_val["n_too_many_rest_days"] = series_n_total_rest_days[
-            series_n_total_rest_days.index > MAX_ALLOWED_REST_DAYS
-        ].sum()
-
         # overview of unused home slots
         d_val["df_unused_home_slots"] = self.make_df_unused_home_slots()
 
         # overview of schedules by team
-        d_val["df_schedules_by_team"] = self.make_df_schedules_by_team(df)
+        df_schedules_by_team = self.make_df_schedules_by_team(df)
+        d_val["df_schedules_by_team"] = df_schedules_by_team
+
+        # overview of regular max rest days (not adjusted!)
+        series_rest_days = df_schedules_by_team["n_rest_days"].fillna(0)
+        d_val["max_rest_days"] = series_rest_days.max()
+
+        series_rest_days_excessive = series_rest_days[
+            series_rest_days > MAX_ALLOWED_REST_DAYS
+        ]
+        d_val["n_high_rest_days_all"] = series_rest_days_excessive.count()
+        d_val["n_high_rest_days_rel"] = series_rest_days_excessive[
+            ~series_rest_days_excessive.index.isin(self.teams_without_home_slots_names)
+        ].count()
 
         return d_val
 
@@ -615,6 +645,14 @@ class LeagueScheduler:
             )
         return feasible_home_slots
 
+    def _get_teams_without_home_slots(self, d_slots: dict) -> dict:
+        """Returns a dictionary with teams that have no home slots."""
+        teams_without_home_slots = []
+        for team_idx, set_home in d_slots.items():
+            if len(set_home) == 0:
+                teams_without_home_slots.append(team_idx)
+        return teams_without_home_slots
+
     def _update_dict_available_spots(
         self,
         method: int,
@@ -626,7 +664,8 @@ class LeagueScheduler:
         sets_home = self.sets_home
 
         if team_idx_last is not None:
-            d_spots.pop(team_idx_last)  # drop last processed team
+            # drop last processed team
+            d_spots.pop(team_idx_last)
 
         if method == 1:
             if d_spots is None:
@@ -721,40 +760,23 @@ class LeagueScheduler:
         if len(self.top_X) > n:
             self.top_X = self.top_X[:n]
 
-    def _extract_rest_days_from_X(self, X: np.ndarray) -> pd.DataFrame:
+    def _count_excessive_rest_days(self, X: np.ndarray) -> float:
         """
-        Computes a rest days matrix directly from the X schedule matrix.
-        Rows: teams, Columns: number of rest days, Values: count of occurrences.
-        Matches the output of make_df_rest_days but uses X as input.
+        Returns how often the all teams have rest days > MAX_ALLOWED_REST_DAYS for the given schedule.
+        Ignores a team if it has no available home slots (cf. LeagueScheduler._get_teams_without_home_slots()).
         """
-        teams = list(self.input.sets["teams"].values())
-        n_teams = len(teams)
+        n_excessive_rest_days = 0
+        for team_idx in range(self.n_teams):
+            if team_idx in self.teams_without_home_slots:
+                continue
 
-        rest_days_dict = {team: [] for team in teams}
-        for idx in range(n_teams):
-            home_slots = [
-                X[idx, j]
-                for j in range(n_teams)
-                if idx != j and not np.isnan(X[idx, j])
-            ]
-            away_slots = [
-                X[i, idx]
-                for i in range(n_teams)
-                if idx != i and not np.isnan(X[i, idx])
-            ]
-            all_slots = sorted([int(s) for s in home_slots + away_slots])
+            slots = np.concatenate([X[team_idx, :], X[:, team_idx]])
+            slots = slots[~np.isnan(slots) & (slots != LARGE_NBR)]
 
-            rest_days = [
-                all_slots[i] - all_slots[i - 1] - 1 for i in range(1, len(all_slots))
-            ]
-            rest_days_dict[teams[idx]] = rest_days
+            if len(slots) <= 1:
+                continue
 
-        all_rest_days = sorted(set(rd for rds in rest_days_dict.values() for rd in rds))
-        df = pd.DataFrame(0, index=teams, columns=all_rest_days)
-        for team, rds in rest_days_dict.items():
-            for rd in rds:
-                df.at[team, rd] += 1
+            rest_days = np.diff(np.sort(slots.astype(int))) - 1
+            n_excessive_rest_days += np.sum(rest_days > MAX_ALLOWED_REST_DAYS)
 
-        df.loc["TOTAL"] = df.sum(axis=0)
-
-        return df
+        return n_excessive_rest_days

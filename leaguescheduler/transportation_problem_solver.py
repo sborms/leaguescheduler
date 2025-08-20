@@ -37,10 +37,14 @@ class TransportationProblemSolver:
         self.r_max = max(2, r_max)  # must be at least 2
         self.penalties = penalties
 
-    def solve(self, X: np.ndarray, team_idx: int) -> tuple[list, int]:
+    def solve(
+        self,
+        X: np.ndarray,
+        team_idx: int,
+    ) -> tuple[list, int]:
         """
         Solves transportation problem for given home team (= row) and set of home slots.
-        Returns updated X along with cost from adjacency matrix and picked indexes.
+        Returns updated X alongside cost from adjacency matrix and picked indexes.
         """
         set_home = self.sets_home[team_idx]
         opponents = [t for t in range(X.shape[0]) if t != team_idx]
@@ -69,7 +73,6 @@ class TransportationProblemSolver:
         # run Hungarian algorithm to solve transportation problem
         m = Munkres()
         indexes = m.compute(am)
-        total_cost = self.get_total_cost(indexes, am)
 
         # process optimal indexes (np.nan means not yet scheduled)
         indexes_inv = sorted(
@@ -81,6 +84,9 @@ class TransportationProblemSolver:
 
         # assign selection to X
         X[team_idx, opponents] = pick
+
+        # compute total cost
+        total_cost = self.get_total_cost(indexes, am)
 
         return X, total_cost
 
@@ -167,7 +173,11 @@ class TransportationProblemSolver:
         return am_cost
     # fmt: on
 
-    def get_total_cost(self, indexes: list[tuple[int, int]], am: list) -> float:
+    def get_total_cost(
+        self,
+        indexes: list[tuple[int, int]],
+        am: list,
+    ) -> float:
         """Returns total cost in adjacency matrix from optimal indexes."""
         return sum([am[row][column] for row, column in indexes])
 

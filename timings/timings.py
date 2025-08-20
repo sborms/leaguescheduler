@@ -39,14 +39,14 @@ def timer():
 
 results = {}
 for n_teams in N_TEAMS_LIST:
-    lst_elapsed = []
+    list_elapsed = []
     for n_iterations in N_ITERATIONS_LIST:
         with timer() as elapsed:
             optimize(n_teams, n_iterations)
         elapsed_seconds = elapsed()
-        lst_elapsed.append(elapsed_seconds)
+        list_elapsed.append(elapsed_seconds)
         print(f"{n_teams} teams | {n_iterations} its. => time: {elapsed_seconds:.2f}s")
-    results[n_teams] = lst_elapsed
+    results[n_teams] = list_elapsed
 
 df = pd.DataFrame(results, index=N_ITERATIONS_LIST).round(2)
 

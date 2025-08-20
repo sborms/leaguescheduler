@@ -36,6 +36,7 @@ def main(
     r_max: Annotated[int, typer.Option(help="Minimum required time slots for 2 games of same team.")] = DEFAULTS.r_max,
     alpha: Annotated[float, typer.Option(help="Probability of picking perturbation operator 1.")] = DEFAULTS.alpha,
     beta: Annotated[float, typer.Option(help="Probability of removing a game in operator 1.")] = DEFAULTS.beta,
+    cost_excessive_rest_days: Annotated[float, typer.Option(help="Cost for excessive rest days.")] = DEFAULTS.cost_excessive_rest_days,
 ):
     # fmt: on
     if seed is not None:
@@ -73,6 +74,7 @@ def main(
             penalties=penalties,
             alpha=alpha,
             beta=beta,
+            cost_excessive_rest_days=cost_excessive_rest_days,
         )
 
         scheduler = LeagueScheduler(

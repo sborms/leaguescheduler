@@ -21,10 +21,10 @@ web:
 
 experiment:
 	uv run 2rr \
-		--input-file "experiments/input.xlsx" \
-		--output-folder "experiments/output" \
+		--input-file "experiments/Moeilijke reeksen.xlsx" \
+		--output-folder "experiments/difficile" \
 		--seed 505 \
-		--n-iterations 2000
+		--n-iterations 10000
 
 time:
 	uv run timings/timings.py

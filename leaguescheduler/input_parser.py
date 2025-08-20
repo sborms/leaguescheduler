@@ -45,7 +45,7 @@ class InputParser:
 
     def get_penalties(self) -> dict:
         """Reads penalties (if available) from input Excel file and returns them as a dictionary."""
-        penalties = None  # fallback
+        penalties = {}  # fallback
 
         if "penalties" in self.file.sheet_names:
             penalties = (

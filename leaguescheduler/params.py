@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 
 DEFAULT_COST = 1000
 DEFAULT_R_MAX = 4
+DEFAULT_COST_REST_DAYS = 500
 
 DEFAULT_PENALTIES = {}
 DEFAULT_PENALTIES.update({k + 1: 5 for k in range(DEFAULT_R_MAX - 2, 7)})  # <1 week
@@ -30,6 +31,7 @@ class SchedulerParams:
             Example input: {1: 10, 2: 3, 3: 1}
     :param alpha: Probability of picking perturbation operator 1.
     :param beta: Probability of removing a game in operator 1.
+    :param cost_excessive_rest_days: Cost for excessive rest days. [not in original paper]
     """
 
     tabu_length: int = 4
@@ -41,3 +43,4 @@ class SchedulerParams:
     penalties: dict[int, int] = field(default_factory=lambda: DEFAULT_PENALTIES.copy())
     alpha: float = 0.5
     beta: float = 0.01
+    cost_excessive_rest_days: float = DEFAULT_COST_REST_DAYS

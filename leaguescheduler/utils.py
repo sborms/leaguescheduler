@@ -57,7 +57,9 @@ def gather_stats(d_val: dict, d_stats: dict = None) -> dict:
             "unscheduled",
             "missing_home_slots",
             "min_gap_pairs",
-            "n_too_many_rest_days",
+            "max_rest_days",
+            "n_high_rest_days_all",
+            "n_high_rest_days_rel",
         ]
         d_stats = {key: [] for key in keys}
 
