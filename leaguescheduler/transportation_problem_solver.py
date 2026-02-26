@@ -1,6 +1,5 @@
+import fastmunk
 import numpy as np
-from munkres import DISALLOWED as D
-from munkres import Munkres
 
 from .constants import DISALLOWED_NBR, LARGE_NBR
 from .params import SchedulerParams
@@ -67,11 +66,11 @@ class TransportationProblemSolver:
             axis=1,
         )
 
-        # convert to list and add DISALLOWED constant
-        am = [[D if v == DISALLOWED_NBR else v for v in r] for r in am_np.tolist()]
+        # replace disallowed values with a large number
+        am = np.where(am_np == DISALLOWED_NBR, 1e15, am_np)
 
         # run Hungarian algorithm to solve transportation problem
-        m = Munkres()
+        m = fastmunk.FastMunk()
         indexes = m.compute(am)
 
         # process optimal indexes (np.nan means not yet scheduled)

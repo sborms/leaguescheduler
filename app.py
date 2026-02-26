@@ -107,7 +107,7 @@ else:
         d_penalties, orient="index", columns=["Penalty"]
     ).rename_axis("Rest day")
     df_penalties.index = df_penalties.index - 1  # rest days = n_days - 1 for display
-    main_col3.dataframe(df_penalties, use_container_width=True, height=5 * 35 + 3)
+    main_col3.dataframe(df_penalties, width="stretch", height=5 * 35 + 3)
 
 st.markdown("---")
 
@@ -208,7 +208,7 @@ with output_col2:
         st.markdown(
             f"The last two columns show how often the **actual number of rest days** exceeds {MAX_ALLOWED_REST_DAYS}, including (`_all`) or excluding (`_rel`) teams without available home slots. "
             "The algorithm itself **does not penalize** excessive rest days for those teams, hence the latter column is most _relevant_. The fact that the table displays the actual rest days and not the adjusted "
-            "ones accounting for unavailability, makes it 'worst-case' indicators."
+            "ones accounting for unavailability, makes them 'worst-case' indicators."
         )
         st.table(df_stats)
 
