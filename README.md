@@ -90,7 +90,7 @@ It has a more limited set of parameters (namely `m`, `r_max`, `n_iterations`, an
 
 Additionally, the output file includes for every league and by team the distribution of the **number of _adjusted_ rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
-If the app happens to be sleeping due to inactivity 😴, just wake it up. You can run the app locally with `make web`.
+If the app happens to be sleeping due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
 
 #### Timings
 

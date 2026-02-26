@@ -1,61 +1,228 @@
-2025-08-20 17:39:21 - INFO - Inputs:
-2025-08-20 17:39:21 - INFO -  --> input_file = example_input.xlsx
-2025-08-20 17:39:21 - INFO -  --> output_folder = example_output
-2025-08-20 17:39:21 - INFO -  --> seed = 321
-2025-08-20 17:39:21 - INFO -  --> unavailable = NIET
-2025-08-20 17:39:21 - INFO -  --> clip_bot = 1
-2025-08-20 17:39:21 - INFO -  --> clip_upp = 41
-2025-08-20 17:39:21 - INFO -  --> net = False
-2025-08-20 17:39:21 - INFO -  --> tabu_length = 4
-2025-08-20 17:39:21 - INFO -  --> perturbation_length = 50
-2025-08-20 17:39:21 - INFO -  --> n_iterations = 500
-2025-08-20 17:39:21 - INFO -  --> m = 7
-2025-08-20 17:39:21 - INFO -  --> p = 1000
-2025-08-20 17:39:21 - INFO -  --> r_max = 4
-2025-08-20 17:39:21 - INFO -  --> alpha = 0.5
-2025-08-20 17:39:21 - INFO -  --> beta = 0.01
-2025-08-20 17:39:21 - INFO -  --> cost_excessive_rest_days = 500.0
-2025-08-20 17:39:22 - INFO - PROCESSING LEAGUE > LEAGUE A
-2025-08-20 17:39:22 - INFO - Read and parsed input data
-2025-08-20 17:39:22 - INFO - Phase 1: Construction
-2025-08-20 17:39:22 - INFO - Initialized schedule using method 1 with cost 3274.0
-2025-08-20 17:39:23 - INFO - Initialized schedule using method 2 with cost 848.0
-2025-08-20 17:39:23 - INFO - Comparing costs 3274.0 vs. 848.0
-2025-08-20 17:39:23 - INFO - Initialization method 2 is best
-2025-08-20 17:39:23 - INFO - Phase 2: Tabu & perturbation
-2025-08-20 17:39:23 - INFO - Tabu phase starts with cost 848.0
-2025-08-20 17:39:24 - INFO - !!! New best at iteration    25 ->     414.0 < 848.0     | Rest days = 0
-2025-08-20 17:39:24 - INFO - !!! New best at iteration    26 ->     413.0 < 414.0     | Rest days = 0
-2025-08-20 17:39:24 - INFO - Perturbating schedule at iteration 50
-2025-08-20 17:39:27 - INFO - Perturbating schedule at iteration 250
-2025-08-20 17:39:28 - INFO - !!! New best at iteration   336 ->     321.0 < 413.0     | Rest days = 0
-2025-08-20 17:39:28 - INFO - !!! New best at iteration   337 ->     313.0 < 321.0     | Rest days = 0
-2025-08-20 17:39:28 - INFO - !!! New best at iteration   339 ->     310.0 < 313.0     | Rest days = 0
-2025-08-20 17:39:28 - INFO - !!! New best at iteration   341 ->     301.0 < 310.0     | Rest days = 0
-2025-08-20 17:39:30 - INFO - Perturbating schedule at iteration 450
-2025-08-20 17:39:30 - INFO - Completed scheduling
-2025-08-20 17:39:31 - INFO - Stored running minimum cost plot
-2025-08-20 17:39:31 - INFO - Stored calendar
-2025-08-20 17:39:31 - INFO - Gathered validation info
-2025-08-20 17:39:32 - INFO - Stored rest days plot
-2025-08-20 17:39:32 - INFO - PROCESSING LEAGUE > LEAGUE B
-2025-08-20 17:39:32 - INFO - Read and parsed input data
-2025-08-20 17:39:32 - INFO - Phase 1: Construction
-2025-08-20 17:39:32 - INFO - Initialized schedule using method 1 with cost 1328.0
-2025-08-20 17:39:33 - INFO - Initialized schedule using method 2 with cost 4869.0
-2025-08-20 17:39:33 - INFO - Comparing costs 1328.0 vs. 4869.0
-2025-08-20 17:39:33 - INFO - Initialization method 1 is best
-2025-08-20 17:39:33 - INFO - Phase 2: Tabu & perturbation
-2025-08-20 17:39:33 - INFO - Tabu phase starts with cost 1328.0
-2025-08-20 17:39:33 - INFO - !!! New best at iteration    31 ->     963.0 < 1328.0    | Rest days = 1
-2025-08-20 17:39:33 - INFO - !!! New best at iteration    32 ->     955.0 < 963.0     | Rest days = 1
-2025-08-20 17:39:33 - INFO - !!! New best at iteration    36 ->     951.0 < 955.0     | Rest days = 1
-2025-08-20 17:39:34 - INFO - Perturbating schedule at iteration 50
-2025-08-20 17:39:35 - INFO - Perturbating schedule at iteration 150
-2025-08-20 17:39:37 - INFO - Perturbating schedule at iteration 300
-2025-08-20 17:39:39 - INFO - Perturbating schedule at iteration 450
-2025-08-20 17:39:40 - INFO - Completed scheduling
-2025-08-20 17:39:40 - INFO - Stored running minimum cost plot
-2025-08-20 17:39:40 - INFO - Stored calendar
-2025-08-20 17:39:41 - INFO - Gathered validation info
-2025-08-20 17:39:41 - INFO - Stored rest days plot
+2026-02-26 22:00:26 - INFO - Inputs:
+2026-02-26 22:00:26 - INFO -  --> input_file = example_input.xlsx
+2026-02-26 22:00:26 - INFO -  --> output_folder = example_output
+2026-02-26 22:00:26 - INFO -  --> seed = 321
+2026-02-26 22:00:26 - INFO -  --> unavailable = NIET
+2026-02-26 22:00:26 - INFO -  --> clip_bot = 1
+2026-02-26 22:00:26 - INFO -  --> clip_upp = 41
+2026-02-26 22:00:26 - INFO -  --> net = False
+2026-02-26 22:00:26 - INFO -  --> tabu_length = 4
+2026-02-26 22:00:26 - INFO -  --> perturbation_length = 50
+2026-02-26 22:00:26 - INFO -  --> n_iterations = 500
+2026-02-26 22:00:26 - INFO -  --> m = 7
+2026-02-26 22:00:26 - INFO -  --> p = 1000
+2026-02-26 22:00:26 - INFO -  --> r_max = 4
+2026-02-26 22:00:26 - INFO -  --> alpha = 0.5
+2026-02-26 22:00:26 - INFO -  --> beta = 0.01
+2026-02-26 22:00:26 - INFO -  --> cost_excessive_rest_days = 500.0
+2026-02-26 22:00:27 - INFO - PROCESSING LEAGUE > LEAGUE A
+2026-02-26 22:00:27 - INFO - Read and parsed input data
+2026-02-26 22:00:27 - INFO - Phase 1: Construction
+2026-02-26 22:00:27 - INFO - Initialized schedule using method 1 with cost 1296.0
+2026-02-26 22:00:28 - INFO - Initialized schedule using method 2 with cost 808.0
+2026-02-26 22:00:28 - INFO - Comparing costs 1296.0 vs. 808.0
+2026-02-26 22:00:28 - INFO - Initialization method 2 is best
+2026-02-26 22:00:28 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:00:28 - INFO - Tabu phase starts with cost 808.0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    11 ->     376.0 < 808.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    12 ->     361.0 < 376.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    37 ->     349.0 < 361.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    43 ->     348.0 < 349.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    44 ->     337.0 < 348.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    46 ->     334.0 < 337.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    47 ->     331.0 < 334.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    48 ->     327.0 < 331.0     | Rest days = 0
+2026-02-26 22:00:28 - INFO - !!! New best at iteration    49 ->     322.0 < 327.0     | Rest days = 0
+2026-02-26 22:00:29 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:00:29 - INFO - !!! New best at iteration   133 ->     319.0 < 322.0     | Rest days = 0
+2026-02-26 22:00:29 - INFO - !!! New best at iteration   159 ->     317.0 < 319.0     | Rest days = 0
+2026-02-26 22:00:29 - INFO - !!! New best at iteration   188 ->     314.0 < 317.0     | Rest days = 0
+2026-02-26 22:00:29 - INFO - !!! New best at iteration   209 ->     313.0 < 314.0     | Rest days = 0
+2026-02-26 22:00:30 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:00:30 - INFO - Perturbating schedule at iteration 350
+2026-02-26 22:00:31 - INFO - Perturbating schedule at iteration 450
+2026-02-26 22:00:32 - INFO - Completed scheduling
+2026-02-26 22:00:32 - INFO - Stored running minimum cost plot
+2026-02-26 22:00:32 - INFO - Stored calendar
+2026-02-26 22:00:32 - INFO - Gathered validation info
+2026-02-26 22:00:33 - INFO - Stored rest days plot
+2026-02-26 22:00:33 - INFO - PROCESSING LEAGUE > LEAGUE B
+2026-02-26 22:00:33 - INFO - Read and parsed input data
+2026-02-26 22:00:33 - INFO - Phase 1: Construction
+2026-02-26 22:00:33 - INFO - Initialized schedule using method 1 with cost 1331.0
+2026-02-26 22:00:34 - INFO - Initialized schedule using method 2 with cost 3373.0
+2026-02-26 22:00:34 - INFO - Comparing costs 1331.0 vs. 3373.0
+2026-02-26 22:00:34 - INFO - Initialization method 1 is best
+2026-02-26 22:00:34 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:00:34 - INFO - Tabu phase starts with cost 1331.0
+2026-02-26 22:00:34 - INFO - !!! New best at iteration    22 ->     967.0 < 1331.0    | Rest days = 1
+2026-02-26 22:00:34 - INFO - !!! New best at iteration    47 ->     958.0 < 967.0     | Rest days = 1
+2026-02-26 22:00:34 - INFO - !!! New best at iteration    48 ->     955.0 < 958.0     | Rest days = 1
+2026-02-26 22:00:34 - INFO - !!! New best at iteration    57 ->     954.0 < 955.0     | Rest days = 1
+2026-02-26 22:00:34 - INFO - !!! New best at iteration    58 ->     944.0 < 954.0     | Rest days = 1
+2026-02-26 22:00:35 - INFO - !!! New best at iteration    73 ->     427.0 < 944.0     | Rest days = 0
+2026-02-26 22:00:35 - INFO - !!! New best at iteration    74 ->     425.0 < 427.0     | Rest days = 0
+2026-02-26 22:00:35 - INFO - !!! New best at iteration    75 ->     417.0 < 425.0     | Rest days = 0
+2026-02-26 22:00:35 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:00:36 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:00:37 - INFO - Perturbating schedule at iteration 400
+2026-02-26 22:00:37 - INFO - !!! New best at iteration   448 ->     370.0 < 417.0     | Rest days = 0
+2026-02-26 22:00:37 - INFO - !!! New best at iteration   454 ->     362.0 < 370.0     | Rest days = 0
+2026-02-26 22:00:38 - INFO - Perturbating schedule at iteration 500
+2026-02-26 22:00:38 - INFO - Completed scheduling
+2026-02-26 22:00:38 - INFO - Stored running minimum cost plot
+2026-02-26 22:00:38 - INFO - Stored calendar
+2026-02-26 22:00:38 - INFO - Gathered validation info
+2026-02-26 22:00:39 - INFO - Stored rest days plot
+2026-02-26 22:00:57 - INFO - Inputs:
+2026-02-26 22:00:57 - INFO -  --> input_file = example_input.xlsx
+2026-02-26 22:00:57 - INFO -  --> output_folder = example_output
+2026-02-26 22:00:57 - INFO -  --> seed = 321
+2026-02-26 22:00:57 - INFO -  --> unavailable = NIET
+2026-02-26 22:00:57 - INFO -  --> clip_bot = 1
+2026-02-26 22:00:57 - INFO -  --> clip_upp = 41
+2026-02-26 22:00:57 - INFO -  --> net = False
+2026-02-26 22:00:57 - INFO -  --> tabu_length = 4
+2026-02-26 22:00:57 - INFO -  --> perturbation_length = 50
+2026-02-26 22:00:57 - INFO -  --> n_iterations = 500
+2026-02-26 22:00:57 - INFO -  --> m = 7
+2026-02-26 22:00:57 - INFO -  --> p = 1000
+2026-02-26 22:00:57 - INFO -  --> r_max = 4
+2026-02-26 22:00:57 - INFO -  --> alpha = 0.5
+2026-02-26 22:00:57 - INFO -  --> beta = 0.01
+2026-02-26 22:00:57 - INFO -  --> cost_excessive_rest_days = 500.0
+2026-02-26 22:00:57 - INFO - PROCESSING LEAGUE > LEAGUE A
+2026-02-26 22:00:57 - INFO - Read and parsed input data
+2026-02-26 22:00:57 - INFO - Phase 1: Construction
+2026-02-26 22:00:57 - INFO - Initialized schedule using method 1 with cost 1296.0
+2026-02-26 22:00:58 - INFO - Initialized schedule using method 2 with cost 808.0
+2026-02-26 22:00:58 - INFO - Comparing costs 1296.0 vs. 808.0
+2026-02-26 22:00:58 - INFO - Initialization method 2 is best
+2026-02-26 22:00:58 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:00:58 - INFO - Tabu phase starts with cost 808.0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    11 ->     376.0 < 808.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    12 ->     361.0 < 376.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    37 ->     349.0 < 361.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    43 ->     348.0 < 349.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    44 ->     337.0 < 348.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    46 ->     334.0 < 337.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    47 ->     331.0 < 334.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    48 ->     327.0 < 331.0     | Rest days = 0
+2026-02-26 22:00:58 - INFO - !!! New best at iteration    49 ->     322.0 < 327.0     | Rest days = 0
+2026-02-26 22:00:59 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:00:59 - INFO - !!! New best at iteration   133 ->     319.0 < 322.0     | Rest days = 0
+2026-02-26 22:00:59 - INFO - !!! New best at iteration   159 ->     317.0 < 319.0     | Rest days = 0
+2026-02-26 22:01:00 - INFO - !!! New best at iteration   188 ->     314.0 < 317.0     | Rest days = 0
+2026-02-26 22:01:00 - INFO - !!! New best at iteration   209 ->     313.0 < 314.0     | Rest days = 0
+2026-02-26 22:01:00 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:01:01 - INFO - Perturbating schedule at iteration 350
+2026-02-26 22:01:01 - INFO - Perturbating schedule at iteration 450
+2026-02-26 22:01:02 - INFO - Completed scheduling
+2026-02-26 22:01:02 - INFO - Stored running minimum cost plot
+2026-02-26 22:01:02 - INFO - Stored calendar
+2026-02-26 22:01:02 - INFO - Gathered validation info
+2026-02-26 22:01:03 - INFO - Stored rest days plot
+2026-02-26 22:01:03 - INFO - PROCESSING LEAGUE > LEAGUE B
+2026-02-26 22:01:03 - INFO - Read and parsed input data
+2026-02-26 22:01:03 - INFO - Phase 1: Construction
+2026-02-26 22:01:03 - INFO - Initialized schedule using method 1 with cost 1331.0
+2026-02-26 22:01:04 - INFO - Initialized schedule using method 2 with cost 3373.0
+2026-02-26 22:01:04 - INFO - Comparing costs 1331.0 vs. 3373.0
+2026-02-26 22:01:04 - INFO - Initialization method 1 is best
+2026-02-26 22:01:04 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:01:04 - INFO - Tabu phase starts with cost 1331.0
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    22 ->     967.0 < 1331.0    | Rest days = 1
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    47 ->     958.0 < 967.0     | Rest days = 1
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    48 ->     955.0 < 958.0     | Rest days = 1
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    57 ->     954.0 < 955.0     | Rest days = 1
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    58 ->     944.0 < 954.0     | Rest days = 1
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    73 ->     427.0 < 944.0     | Rest days = 0
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    74 ->     425.0 < 427.0     | Rest days = 0
+2026-02-26 22:01:04 - INFO - !!! New best at iteration    75 ->     417.0 < 425.0     | Rest days = 0
+2026-02-26 22:01:04 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:01:06 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:01:07 - INFO - Perturbating schedule at iteration 400
+2026-02-26 22:01:07 - INFO - !!! New best at iteration   448 ->     370.0 < 417.0     | Rest days = 0
+2026-02-26 22:01:07 - INFO - !!! New best at iteration   454 ->     362.0 < 370.0     | Rest days = 0
+2026-02-26 22:01:07 - INFO - Perturbating schedule at iteration 500
+2026-02-26 22:01:07 - INFO - Completed scheduling
+2026-02-26 22:01:08 - INFO - Stored running minimum cost plot
+2026-02-26 22:01:08 - INFO - Stored calendar
+2026-02-26 22:01:08 - INFO - Gathered validation info
+2026-02-26 22:01:08 - INFO - Stored rest days plot
+2026-02-26 22:02:05 - INFO - Inputs:
+2026-02-26 22:02:05 - INFO -  --> input_file = example_input.xlsx
+2026-02-26 22:02:05 - INFO -  --> output_folder = example_output
+2026-02-26 22:02:05 - INFO -  --> seed = 321
+2026-02-26 22:02:05 - INFO -  --> unavailable = NIET
+2026-02-26 22:02:05 - INFO -  --> clip_bot = 1
+2026-02-26 22:02:05 - INFO -  --> clip_upp = 41
+2026-02-26 22:02:05 - INFO -  --> net = False
+2026-02-26 22:02:05 - INFO -  --> tabu_length = 4
+2026-02-26 22:02:05 - INFO -  --> perturbation_length = 50
+2026-02-26 22:02:05 - INFO -  --> n_iterations = 500
+2026-02-26 22:02:05 - INFO -  --> m = 7
+2026-02-26 22:02:05 - INFO -  --> p = 1000
+2026-02-26 22:02:05 - INFO -  --> r_max = 4
+2026-02-26 22:02:05 - INFO -  --> alpha = 0.5
+2026-02-26 22:02:05 - INFO -  --> beta = 0.01
+2026-02-26 22:02:05 - INFO -  --> cost_excessive_rest_days = 500.0
+2026-02-26 22:02:05 - INFO - PROCESSING LEAGUE > LEAGUE A
+2026-02-26 22:02:05 - INFO - Read and parsed input data
+2026-02-26 22:02:05 - INFO - Phase 1: Construction
+2026-02-26 22:02:05 - INFO - Initialized schedule using method 1 with cost 1296.0
+2026-02-26 22:02:06 - INFO - Initialized schedule using method 2 with cost 808.0
+2026-02-26 22:02:06 - INFO - Comparing costs 1296.0 vs. 808.0
+2026-02-26 22:02:06 - INFO - Initialization method 2 is best
+2026-02-26 22:02:06 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:02:06 - INFO - Tabu phase starts with cost 808.0
+2026-02-26 22:02:06 - INFO - !!! New best at iteration    11 ->     376.0 < 808.0     | Rest days = 0
+2026-02-26 22:02:06 - INFO - !!! New best at iteration    12 ->     361.0 < 376.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    37 ->     349.0 < 361.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    43 ->     348.0 < 349.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    44 ->     337.0 < 348.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    46 ->     334.0 < 337.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    47 ->     331.0 < 334.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    48 ->     327.0 < 331.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - !!! New best at iteration    49 ->     322.0 < 327.0     | Rest days = 0
+2026-02-26 22:02:07 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:02:07 - INFO - !!! New best at iteration   133 ->     319.0 < 322.0     | Rest days = 0
+2026-02-26 22:02:08 - INFO - !!! New best at iteration   159 ->     317.0 < 319.0     | Rest days = 0
+2026-02-26 22:02:08 - INFO - !!! New best at iteration   188 ->     314.0 < 317.0     | Rest days = 0
+2026-02-26 22:02:08 - INFO - !!! New best at iteration   209 ->     313.0 < 314.0     | Rest days = 0
+2026-02-26 22:02:08 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:02:09 - INFO - Perturbating schedule at iteration 350
+2026-02-26 22:02:10 - INFO - Perturbating schedule at iteration 450
+2026-02-26 22:02:10 - INFO - Completed scheduling
+2026-02-26 22:02:10 - INFO - Stored running minimum cost plot
+2026-02-26 22:02:10 - INFO - Stored calendar
+2026-02-26 22:02:11 - INFO - Gathered validation info
+2026-02-26 22:02:11 - INFO - Stored rest days plot
+2026-02-26 22:02:11 - INFO - PROCESSING LEAGUE > LEAGUE B
+2026-02-26 22:02:11 - INFO - Read and parsed input data
+2026-02-26 22:02:11 - INFO - Phase 1: Construction
+2026-02-26 22:02:12 - INFO - Initialized schedule using method 1 with cost 1331.0
+2026-02-26 22:02:13 - INFO - Initialized schedule using method 2 with cost 3373.0
+2026-02-26 22:02:13 - INFO - Comparing costs 1331.0 vs. 3373.0
+2026-02-26 22:02:13 - INFO - Initialization method 1 is best
+2026-02-26 22:02:13 - INFO - Phase 2: Tabu & perturbation
+2026-02-26 22:02:13 - INFO - Tabu phase starts with cost 1331.0
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    22 ->     967.0 < 1331.0    | Rest days = 1
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    47 ->     958.0 < 967.0     | Rest days = 1
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    48 ->     955.0 < 958.0     | Rest days = 1
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    57 ->     954.0 < 955.0     | Rest days = 1
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    58 ->     944.0 < 954.0     | Rest days = 1
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    73 ->     427.0 < 944.0     | Rest days = 0
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    74 ->     425.0 < 427.0     | Rest days = 0
+2026-02-26 22:02:13 - INFO - !!! New best at iteration    75 ->     417.0 < 425.0     | Rest days = 0
+2026-02-26 22:02:13 - INFO - Perturbating schedule at iteration 100
+2026-02-26 22:02:15 - INFO - Perturbating schedule at iteration 250
+2026-02-26 22:02:16 - INFO - Perturbating schedule at iteration 400
+2026-02-26 22:02:16 - INFO - !!! New best at iteration   448 ->     370.0 < 417.0     | Rest days = 0
+2026-02-26 22:02:16 - INFO - !!! New best at iteration   454 ->     362.0 < 370.0     | Rest days = 0
+2026-02-26 22:02:16 - INFO - Perturbating schedule at iteration 500
+2026-02-26 22:02:16 - INFO - Completed scheduling
+2026-02-26 22:02:17 - INFO - Stored running minimum cost plot
+2026-02-26 22:02:17 - INFO - Stored calendar
+2026-02-26 22:02:17 - INFO - Gathered validation info
+2026-02-26 22:02:18 - INFO - Stored rest days plot
