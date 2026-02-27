@@ -19,7 +19,7 @@ jobs:
           python-version: 3.13
       - uses: dtolnay/rust-toolchain@stable
       - run: uv sync --frozen
-      - run: uv run maturin build --release -m packages/fasttps/Cargo.toml
+      - run: uv run maturin build --release --manylinux 2_34 -m packages/fasttps/Cargo.toml
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
