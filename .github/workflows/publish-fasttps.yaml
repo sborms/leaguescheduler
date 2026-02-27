@@ -60,5 +60,6 @@ jobs:
         with:
           version: "latest"
           python-version: 3.13
+          cache: false
       - run: ls -R
       - run: uv publish --trusted-publishing always dist/*manylinux* dist/*macosx* dist/*win*
