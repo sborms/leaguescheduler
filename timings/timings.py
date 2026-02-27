@@ -6,13 +6,14 @@ import pandas as pd
 
 from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 
-N_TEAMS_LIST = [13]
+N_TEAMS_LIST = [13, 4]
 
-# N_ITERATIONS_LIST = [10, 100]  # oracle
-N_ITERATIONS_LIST = [10, 100, 1000, 10000, 100000]  # oracle10k
+N_ITERATIONS_LIST = [10, 100]  # oracle
+# N_ITERATIONS_LIST = [10, 100, 1000, 10000, 100000]  # oracle10k
 
 input_file = "example_input.xlsx"
 output_file = "timings/timings.txt"
+oracle_file = "timings/oracle.npz"
 sheet_name = "LEAGUE A"
 
 np.random.seed(505)
@@ -86,7 +87,7 @@ np.savez(
 )
 
 # verify optimized results against oracle
-oracle = np.load("timings/oracle10k.npz")
+oracle = np.load(oracle_file)
 
 dict_checks = {}
 for n_teams in N_TEAMS_LIST:

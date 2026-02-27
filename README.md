@@ -12,7 +12,7 @@ If you are looking to schedule a sports league with at least the following const
 
 ... then this will help you!
 
-This software implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm to recurrently solve the transportation problem. Additionally, some tricks were added throughout, especially to minimize excessive rest days (internally fixed at 28) between consecutive games of teams.
+This software implements **constrained time-relaxed double round-robin (2RR) sports league scheduling** using the tabu search based heuristic algorithm described in the paper [**Scheduling a non-professional indoor football league**](https://pure.tue.nl/ws/portalfiles/portal/121797609/Bulck2019_Article_SchedulingANon_professionalInd.pdf) by Van Bulck, Goosens and Spieksma (2019). The meta-algorithm heavily relies on the Hungarian algorithm to recurrently solve the transportation problem. Some additional tricks were added, especially to minimize excessive rest days (internally fixed at 28) between consecutive games of teams.
 
 ## Installation
 
@@ -23,7 +23,7 @@ uv venv
 uv pip install -e .
 ```
 
-Make sure to stay in the correct environment once installed, or just use `uv run ...` for commands.
+Make sure to stay in the correct environment once installed, or just use `uv run` for commands.
 
 ## Usage
 
@@ -90,7 +90,7 @@ It has a more limited set of parameters (namely `m`, `r_max`, `n_iterations`, an
 
 Additionally, the output file includes for every league and by team the distribution of the **number of _adjusted_ rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
-If the app happens to be sleeping due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
+If the app sleeps due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
 
 #### Timings
 
