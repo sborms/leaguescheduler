@@ -7,7 +7,8 @@ import pandas as pd
 from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 
 N_TEAMS_LIST = [13, 4]
-N_ITERATIONS_LIST = [10, 100, 1000, 10000]
+# N_ITERATIONS_LIST = [10, 100, 1000, 10000]
+N_ITERATIONS_LIST = [10, 100]
 
 input_file = "example_input.xlsx"
 output_file = "timings/timings.txt"
@@ -82,3 +83,20 @@ np.savez(
         for it, X in zip(N_ITERATIONS_LIST, xs, strict=False)
     },
 )
+
+# verify optimized results against oracle
+oracle = np.load("timings/oracle.npz")
+
+dict_checks = {}
+for n_teams in N_TEAMS_LIST:
+    for n_iterations in N_ITERATIONS_LIST:
+        X = results_X[n_teams][N_ITERATIONS_LIST.index(n_iterations)]
+        oracle_X = oracle[f"teams{n_teams}_iter{n_iterations}"]
+
+        is_equal = np.array_equal(X, oracle_X)
+        dict_checks[f"teams{n_teams}_iter{n_iterations}"] = is_equal
+
+print("\nVerification against oracle:")
+print(f"{'Configuration':<20} | {'Check'}")
+for key, is_equal in dict_checks.items():
+    print(f"{key:<20} | {'OK' if is_equal else 'NOT OK'}")
