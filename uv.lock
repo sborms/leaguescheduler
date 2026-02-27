@@ -209,7 +209,7 @@ wheels = [
 
 [[package]]
 name = "fasttps"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "packages/fasttps" }
 
 [[package]]
@@ -390,7 +390,7 @@ wheels = [
 
 [[package]]
 name = "leaguescheduler"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "fasttps" },
