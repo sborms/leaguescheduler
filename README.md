@@ -94,16 +94,16 @@ If the app sleeps due to inactivity 😴, just wake it back up. You can run the 
 
 #### Timings
 
-How long does the scheduler take? This table sheds some baseline light:
+How long does the scheduler take? This table sheds some baseline light for a league of **13 teams**:
 
-|                  | 13 teams   |
+| Iterations       | Time       |
 |------------------|----------- |
-| 10   iterations  | <1s        |
-| 100  iterations  | <1s        |
-| 1k   iterations  | <1s        |
-| 10k  iterations  | ~3s        |
-| 100k iterations  | ~25s       |
-| 1M   iterations  | ~245s      |
+| 10               | <1s        |
+| 100              | <1s        |
+| 1k               | <1s        |
+| 10k              | ~3s        |
+| 100k             | ~25s       |
+| 1M               | ~245s      |
 
 _Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
 
