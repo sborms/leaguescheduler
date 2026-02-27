@@ -5,7 +5,7 @@ description = "Generate optimal schedules for your time-relaxed double round-rob
 authors = [ { name = "Samuel Borms", email = "sam@desirdata.com" }]
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.14"
 keywords = ["scheduling", "sports", "league", "round-robin", "tabu-search"]
 classifiers = [
     "Development Status :: 4 - Beta",
