@@ -1,6 +1,6 @@
 [package]
 name = "fasttps"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fast TPS internals for the leaguescheduler Python package (not intended for direct use)"
 edition = "2021"
 
