@@ -73,4 +73,4 @@ jobs:
           python-version: 3.13
           enable-cache: false
       - run: ls -R
-      - run: uv publish --trusted-publishing always dist/*
+      - run: uv publish --trusted-publishing always dist/*manylinux* dist/*macosx* dist/*win* dist/*.tar.gz
