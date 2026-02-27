@@ -23,7 +23,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: target/wheels/*.whl
+          path: packages/fasttps/target/wheels/*.whl
 
   publish:
     needs: build-wheels
@@ -43,4 +43,5 @@ jobs:
         with:
           version: "latest"
           python-version: 3.13
+      - run: ls -R
       - run: uv publish --trusted-publishing always dist/*

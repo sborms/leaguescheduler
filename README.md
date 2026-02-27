@@ -150,7 +150,7 @@ The league scheduler is also made available through a hosted [Streamlit applicat
 
 It has a more limited set of parameters (namely `m`, `r_max`, `n_iterations`, and `penalties`) but can be used out of the box yet without logging.
 
-Additionally, the output file includes for every league and by team the distribution of the **number of _adjusted_ rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
+Additionally, the output file includes for every league and by team the distribution of the **number of *adjusted* rest days between games** (meaning that unavailable dates by that team are not considered in the count of the rest days), as well as the **unused home time slots per team**. This facilitates post-analysis of the quality of the generated calendar.
 
 If the app sleeps due to inactivity 😴, just wake it back up. You can run the app locally with `make web`.
 
@@ -167,7 +167,7 @@ How long does the scheduler take? This table sheds some baseline light for a lea
 | 100k             | ~25s       |
 | 1M               | ~245s      |
 
-_Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
+*Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM.*
 
 A few 100(0)s iterations are typically sufficient to arrive at a good schedule.
 
