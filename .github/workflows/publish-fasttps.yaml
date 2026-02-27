@@ -33,17 +33,28 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           args: --release -m packages/fasttps/Cargo.toml
-      - name: Build sdist
-        run: uv run maturin sdist -m packages/fasttps/Cargo.toml
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: |
-            packages/fasttps/target/wheels/*.whl
-            packages/fasttps/target/wheels/*.tar.gz
+          path: packages/fasttps/target/wheels/*.whl
 
+  build-sdist:
+    if: startsWith(github.ref, 'refs/tags/fasttps-v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: -m packages/fasttps/Cargo.toml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: packages/fasttps/target/wheels/*.tar.gz
+  
   publish:
-    needs: build-wheels
+    needs: [build-wheels, build-sdist]
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -56,10 +67,5 @@ jobs:
           pattern: wheels-*
           merge-multiple: true
           path: dist/
-      - uses: astral-sh/setup-uv@v7
-        with:
-          version: "latest"
-          python-version: 3.13
-          cache: false
       - run: ls -R
-      - run: uv publish --trusted-publishing always dist/*manylinux* dist/*macosx* dist/*win*
+      - run: uv publish --trusted-publishing always dist/*
