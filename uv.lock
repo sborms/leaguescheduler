@@ -13,6 +13,7 @@ resolution-markers = [
 [manifest]
 members = [
     "fastmunk",
+    "fasttps",
     "leaguescheduler",
 ]
 
@@ -325,6 +326,11 @@ version = "0.1.0"
 source = { editable = "packages/fastmunk" }
 
 [[package]]
+name = "fasttps"
+version = "0.1.0"
+source = { editable = "packages/fasttps" }
+
+[[package]]
 name = "fonttools"
 version = "4.61.1"
 source = { registry = "https://pypi.org/simple" }
@@ -610,6 +616,7 @@ version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmunk" },
+    { name = "fasttps" },
     { name = "ipykernel" },
     { name = "jupyter-client" },
     { name = "jupyter-core" },
@@ -638,6 +645,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastmunk", editable = "packages/fastmunk" },
+    { name = "fasttps", editable = "packages/fasttps" },
     { name = "ipykernel", specifier = ">=6.29.4" },
     { name = "jupyter-client", specifier = ">=8.6.2" },
     { name = "jupyter-core", specifier = ">=5.7.2" },

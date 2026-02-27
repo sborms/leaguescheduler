@@ -19,6 +19,7 @@ dependencies = [
     "uvicorn>=0.30.1",
     "XlsxWriter>=3.2.0",
     "fastmunk>=0.1.0",
+    "fasttps>=0.1.0",
 ]
 
 [dependency-groups]
@@ -80,3 +81,4 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 fastmunk = { workspace = true }
+fasttps = { workspace = true }

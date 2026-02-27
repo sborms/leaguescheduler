@@ -1,0 +1,15 @@
+[package]
+name = "fasttps"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "fasttps"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+numpy = "0.22"
+ndarray = "0.16"
+fixedbitset = "0.4"
+ordered-float = "3"

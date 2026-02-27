@@ -7,8 +7,9 @@ import pandas as pd
 from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 
 N_TEAMS_LIST = [13, 4]
-# N_ITERATIONS_LIST = [10, 100, 1000, 10000]
-N_ITERATIONS_LIST = [10, 100]
+
+# N_ITERATIONS_LIST = [10, 100]  # oracle
+N_ITERATIONS_LIST = [10, 100, 1000, 10000]  # oracle10k
 
 input_file = "example_input.xlsx"
 output_file = "timings/timings.txt"
@@ -85,7 +86,7 @@ np.savez(
 )
 
 # verify optimized results against oracle
-oracle = np.load("timings/oracle.npz")
+oracle = np.load("timings/oracle10k.npz")
 
 dict_checks = {}
 for n_teams in N_TEAMS_LIST:
