@@ -1,5 +1,10 @@
 .PHONY: example
 
+push:
+	git add .
+	git commit -m "$(m)"
+	git push
+
 brush:
 	ruff check --select I --fix .
 	ruff format .

@@ -14,7 +14,7 @@ def optimize(
     input.from_excel(sheet_name=sheet_name)
     input.parse()
 
-    input.data = input.data.iloc[:, : n_teams + 1]
+    input.data = input.data.iloc[:, : n_teams + 1]  # limit data to n_teams
 
     scheduler = LeagueScheduler(
         input=input,
