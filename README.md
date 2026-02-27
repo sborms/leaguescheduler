@@ -23,7 +23,7 @@ uv venv
 uv pip install -e .
 ```
 
-Make sure to stay in the correct environment once installed, or just use `uv run` for commands.
+Make sure to stay in the correct environment once installed, or use `uv run` for commands.
 
 ## Usage
 
