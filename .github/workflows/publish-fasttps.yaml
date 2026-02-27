@@ -67,5 +67,10 @@ jobs:
           pattern: wheels-*
           merge-multiple: true
           path: dist/
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          python-version: 3.13
+          enable-cache: false
       - run: ls -R
       - run: uv publish --trusted-publishing always dist/*
