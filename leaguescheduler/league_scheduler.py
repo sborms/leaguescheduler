@@ -1,4 +1,6 @@
+import bisect
 import logging
+from collections import deque
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -136,6 +138,7 @@ class LeagueScheduler:
 
         # track top X matrices with lowest cost as a list of dicts {"cost": float, "X": np.ndarray}
         self.top_X = []
+        self._top_X_costs = []  # parallel list for fast bisect insertion
 
         # handy precomputed variables
         self.n_teams = len(self.input.sets["teams"])
@@ -146,6 +149,7 @@ class LeagueScheduler:
             self.input.sets["teams"][team_idx]
             for team_idx in self.teams_without_home_slots
         ]
+        self._rest_days_buf = np.empty((self.n_teams, 2 * self.n_teams))
 
     def construction_phase(self) -> None:
         """Generates initial (possibly incomplete) schedule and assigns it to self.X."""
@@ -233,14 +237,14 @@ class LeagueScheduler:
         full_cost_min = self.list_full_costs[-1]
         self.logger.info(f"Tabu phase starts with cost {full_cost_min}")
 
-        list_tabu = []
+        list_tabu = deque()
         list_nontabu = list(self.input.sets["teams"].keys())
 
         it = 0
         while it < self.n_iterations and self.list_full_costs[-1] > 0:
             it += 1
             # self.logger.info(f"Iteration {it}")
-            if progress_bar is not None:
+            if progress_bar is not None and it % 10 == 0:
                 progress_bar.progress(it / self.n_iterations)
 
             # check if current schedule needs to be perturbated
@@ -260,7 +264,7 @@ class LeagueScheduler:
 
             # recover team that has been tabu_length iterations in tabu list
             if it > self.tabu_length:
-                team_nontabu = list_tabu.pop(0)
+                team_nontabu = list_tabu.popleft()
                 list_nontabu.append(team_nontabu)
 
             # randomly choose non-tabu team
@@ -752,31 +756,48 @@ class LeagueScheduler:
     def _update_top_X(self, cost: float, X: np.ndarray, n: int = 10) -> None:
         """
         Adds the current X and cost to self.top_X if it belongs in the top 'n' lowest costs.
-        Keeps self.top_X sorted by ascending const with max length 'n'.
+        Keeps self.top_X sorted by ascending cost with max length 'n'.
         """
+        # skip if cost doesn't qualify for top n
+        if len(self.top_X) >= n and cost >= self._top_X_costs[-1]:
+            return
+
         entry = {"cost": cost, "X": np.copy(X)}
-        self.top_X.append(entry)
-        self.top_X.sort(key=lambda e: e["cost"])
+        idx = bisect.bisect_left(self._top_X_costs, cost)
+        self.top_X.insert(idx, entry)
+        self._top_X_costs.insert(idx, cost)
         if len(self.top_X) > n:
-            self.top_X = self.top_X[:n]
+            self.top_X.pop()
+            self._top_X_costs.pop()
 
     def _count_excessive_rest_days(self, X: np.ndarray) -> float:
         """
         Returns how often the all teams have rest days > MAX_ALLOWED_REST_DAYS for the given schedule.
         Ignores a team if it has no available home slots (cf. LeagueScheduler._get_teams_without_home_slots()).
         """
-        n_excessive_rest_days = 0
-        for team_idx in range(self.n_teams):
-            if team_idx in self.teams_without_home_slots:
-                continue
+        LARGE_SENTINEL = 1e18
 
-            slots = np.concatenate([X[team_idx, :], X[:, team_idx]])
-            slots = slots[~np.isnan(slots) & (slots != LARGE_NBR)]
+        n = self.n_teams
 
-            if len(slots) <= 1:
-                continue
+        # combine all games per team using preallocated buffer: row (home games) + column (away games)
+        buf = self._rest_days_buf
+        buf[:, :n] = X
+        buf[:, n:] = X.T
 
-            rest_days = np.diff(np.sort(slots.astype(int))) - 1
-            n_excessive_rest_days += np.sum(rest_days > MAX_ALLOWED_REST_DAYS)
+        # mask invalid slots (NaN and LARGE_NBR diagonal), replace with finite sentinel
+        buf[np.isnan(buf) | (buf == LARGE_NBR)] = LARGE_SENTINEL
 
-        return n_excessive_rest_days
+        # sort each team's slots in-place
+        buf.sort(axis=1)
+
+        # count excessive rest days between consecutive valid games using direct slice subtraction
+        right = buf[:, 1:]
+        excessive = (right - buf[:, :-1] > MAX_ALLOWED_REST_DAYS + 1) & (
+            right < LARGE_SENTINEL
+        )
+
+        # exclude teams without home slots
+        if self.teams_without_home_slots:
+            excessive[self.teams_without_home_slots, :] = False
+
+        return int(excessive.sum())

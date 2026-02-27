@@ -13,7 +13,8 @@ freeze:
 	uv pip compile pyproject.toml -o requirements.txt >/dev/null
 
 example:
-	uv run 2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 321 --n-iterations 5000
+	rm -rf example_output
+	uv run 2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 321 --n-iterations 50000
 
 web:
 	uv run streamlit run app.py

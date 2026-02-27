@@ -4,7 +4,7 @@
 
 If you are looking to schedule a sports league with at least the following constraints...
 
-- Everyone plays 1 home game and 1 away game against each other
+- Everyone plays 1 home game and 1 away game against each other (double round-robin)
 - Home games are played on reserved dates
 - Away games are not played on unavailable dates
 - No team plays 2 games on the same day
@@ -101,8 +101,9 @@ How long does the scheduler take? This table sheds some baseline light:
 | 10   iterations  | <1s        |
 | 100  iterations  | <1s        |
 | 1k   iterations  | <1s        |
-| 10k  iterations  | ~8s        |
-| 100k iterations  | ~75s       |
+| 10k  iterations  | ~3s        |
+| 100k iterations  | ~25s       |
+| 1M   iterations  | ~245s      |
 
 _Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
 

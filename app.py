@@ -79,7 +79,7 @@ with main_col2:
     n_iterations = main_col2_sub_col3.number_input(
         "**Maximum iterations**",
         min_value=10,
-        max_value=50000,
+        max_value=500000,
         value=DEFAULTS.n_iterations,
     )
 
@@ -94,24 +94,28 @@ with main_col2:
         value="00u",
     )
 
-main_col3.markdown("**Penalties**", unsafe_allow_html=True)
-main_col3.info(
-    "Provide as **penalties** sheet in input",
-    icon="📌",
-)
+with main_col3:
+    st.markdown("**Penalties**", unsafe_allow_html=True)
 
-if not d_penalties:
-    main_col3.markdown("No penalties input")
-else:
-    df_penalties = pd.DataFrame.from_dict(
-        d_penalties, orient="index", columns=["Penalty"]
-    ).rename_axis("Rest day")
-    df_penalties.index = df_penalties.index - 1  # rest days = n_days - 1 for display
-    main_col3.dataframe(df_penalties, width="stretch", height=5 * 35 + 3)
+    st.info(
+        "Provide as **penalties** sheet in input",
+        icon="📌",
+    )
+
+    if not d_penalties:
+        st.markdown("No penalties input")
+    else:
+        df_penalties = pd.DataFrame.from_dict(
+            d_penalties, orient="index", columns=["Penalty"]
+        ).rename_axis("Rest day")
+        df_penalties.index = (
+            df_penalties.index - 1
+        )  # rest days = n_days - 1 for display
+        st.dataframe(df_penalties, width="stretch", height=5 * 35 + 3)
 
 st.markdown("---")
 
-output_col1, output_col2 = st.columns([1, 3], gap="medium")
+output_col1, output_col2 = st.columns([1, 5], gap="medium")
 
 with output_col1:
     # perform scheduling
@@ -126,7 +130,7 @@ with output_col1:
             index_table = []
 
             for sheet_name in selected_sheets:
-                st.markdown(f"Scheduling league **{sheet_name}**")
+                st.markdown(f"Scheduling **{sheet_name}**")
 
                 input.from_excel(sheet_name=sheet_name)
                 input.parse()
