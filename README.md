@@ -1,5 +1,9 @@
 # ⚽📅 2RR League Scheduler
 
+[![PyPI](https://img.shields.io/pypi/v/leaguescheduler)](https://pypi.org/project/leaguescheduler/)
+[![Python](https://img.shields.io/pypi/pyversions/leaguescheduler)](https://pypi.org/project/leaguescheduler/)
+[![CI](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app)
 
 If you are looking to schedule a sports league with at least the following constraints...
@@ -16,20 +20,30 @@ This software implements **constrained time-relaxed double round-robin (2RR) spo
 
 ## Installation
 
-Clone the repository, then install the package in **editable mode** by running the following commands in the root directory ([install `uv`](https://docs.astral.sh/uv/getting-started/installation) if necessary):
+Install from PyPI:
+
+```bash
+pip install leaguescheduler
+```
+
+Or with [uv](https://docs.astral.sh/uv):
+
+```bash
+uv add leaguescheduler
+```
+
+For development, clone the repository and run:
 
 ```bash
 uv venv
-uv pip install -e .
+uv sync
 ```
-
-Make sure to stay in the correct environment once installed, or use `uv run` for commands.
 
 ## Usage
 
 ### Input
 
-The Excel file `example_input.xlsx` contains an example of the input data. The input should always, in the exact format as in the example, include the reserved dates (together with location and time) and unavailable dates of all teams from a single league.
+The Excel file `example/input.xlsx` contains an example of the input data. The input should always, in the exact format as in the example, include the reserved dates (together with location and time) and unavailable dates of all teams from a single league.
 
 One sheet corresponds to one league.
 
@@ -49,8 +63,8 @@ You can use the scheduler from the command line as follows:
 
 ```bash
 2rr \
---input_file "example_input.xlsx" \
---output_folder "example_output" \
+--input_file "example/input.xlsx" \
+--output_folder "example/output" \
 --seed 321 \
 --n_iterations 500
 ```

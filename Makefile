@@ -1,3 +1,5 @@
+.PHONY: example
+
 brush:
 	ruff check --select I --fix .
 	ruff format .
@@ -12,23 +14,23 @@ freeze:
 	uv sync
 	uv pip compile pyproject.toml -o requirements.txt >/dev/null
 
-example:
-	rm -rf example_output
-	uv run 2rr --input-file "example_input.xlsx" --output-folder "example_output" --seed 321 --n-iterations 50000
-
 web:
 	uv run streamlit run app.py
 
+example:
+	rm -rf example/output
+	uv run 2rr --input-file "example/input.xlsx" --output-folder "example/output" --seed 321 --n-iterations 5000
+
+time:
+	uv run timings.py
+
+profile:
+	python -m cProfile -o profile.out timings.py
+	snakeviz profile.out
+	
 experiment:
 	uv run 2rr \
 		--input-file "experiments/Moeilijke reeksen.xlsx" \
 		--output-folder "experiments/difficile" \
 		--seed 505 \
 		--n-iterations 10000
-
-time:
-	uv run timings/timings.py
-
-profile:
-	python -m cProfile -o profile.out timings/timings.py
-	snakeviz profile.out

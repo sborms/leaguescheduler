@@ -1,9 +1,7 @@
-import io
 import logging
 
 import numpy as np
 import pandas as pd
-import streamlit as st
 
 
 def ndigits(number: float) -> int:
@@ -67,43 +65,6 @@ def gather_stats(d_val: dict, d_stats: dict = None) -> dict:
         d_stats[key].append(d_val[key])
 
     return d_stats
-
-
-def download_output(
-    output_sch: dict,
-    output_tea: dict,
-    output_unu: dict,
-    output_res: dict,
-    df_stats: pd.DataFrame,
-) -> io.BytesIO:
-    """Writes outputs to Excel file without storing it locally."""
-    file = io.BytesIO()
-    with pd.ExcelWriter(file, engine="xlsxwriter") as writer:
-        df_stats.to_excel(writer, sheet_name="overview", index=True)
-        for sheet in output_sch.keys():  # assumes keys of inputs match
-            # add schedule sheet and fix date format in Excel
-            output_sch[sheet].to_excel(writer, sheet_name=sheet, index=False)
-
-            workbook = writer.book
-            date_format = workbook.add_format({"num_format": "dd/mm/yyyy"})
-            writer.sheets[sheet].set_column(0, 0, None, date_format)
-
-            # add other sheets
-            output_tea[sheet].to_excel(writer, sheet_name=f"{sheet}_teams", index=True)
-            output_unu[sheet].to_excel(writer, sheet_name=f"{sheet}_unused", index=True)
-            output_res[sheet].to_excel(writer, sheet_name=f"{sheet}_rest", index=True)
-    file.seek(0)
-    return file
-
-
-def penalty_input(col: st.columns, n: str, value: int) -> st.number_input:
-    """Returns a penalty Streamlit input field for given column."""
-    return col.number_input(
-        f"**{n} rest {'day' if n == '1' else 'days'}**",
-        min_value=0,
-        max_value=1000,
-        value=value,
-    )
 
 
 def drop_nearby_points_from_array(arr: np.array, r_max: int) -> np.array:

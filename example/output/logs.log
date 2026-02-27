@@ -1,0 +1,162 @@
+2026-02-27 16:28:24 - INFO - Inputs:
+2026-02-27 16:28:24 - INFO -  --> input_file = example/input.xlsx
+2026-02-27 16:28:24 - INFO -  --> output_folder = example/output
+2026-02-27 16:28:24 - INFO -  --> seed = 321
+2026-02-27 16:28:24 - INFO -  --> unavailable = NIET
+2026-02-27 16:28:24 - INFO -  --> clip_bot = 1
+2026-02-27 16:28:24 - INFO -  --> clip_upp = 41
+2026-02-27 16:28:24 - INFO -  --> net = False
+2026-02-27 16:28:24 - INFO -  --> tabu_length = 4
+2026-02-27 16:28:24 - INFO -  --> perturbation_length = 50
+2026-02-27 16:28:24 - INFO -  --> n_iterations = 5000
+2026-02-27 16:28:24 - INFO -  --> m = 7
+2026-02-27 16:28:24 - INFO -  --> p = 1000
+2026-02-27 16:28:24 - INFO -  --> r_max = 4
+2026-02-27 16:28:24 - INFO -  --> alpha = 0.5
+2026-02-27 16:28:24 - INFO -  --> beta = 0.01
+2026-02-27 16:28:24 - INFO -  --> cost_excessive_rest_days = 500.0
+2026-02-27 16:28:24 - INFO - PROCESSING LEAGUE > LEAGUE A
+2026-02-27 16:28:25 - INFO - Read and parsed input data
+2026-02-27 16:28:25 - INFO - Phase 1: Construction
+2026-02-27 16:28:25 - INFO - Initialized schedule using method 1 with cost 1296.0
+2026-02-27 16:28:25 - INFO - Initialized schedule using method 2 with cost 808.0
+2026-02-27 16:28:25 - INFO - Comparing costs 1296.0 vs. 808.0
+2026-02-27 16:28:25 - INFO - Initialization method 2 is best
+2026-02-27 16:28:25 - INFO - Phase 2: Tabu & perturbation
+2026-02-27 16:28:25 - INFO - Tabu phase starts with cost 808.0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    11 ->     376.0 < 808.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    12 ->     361.0 < 376.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    37 ->     349.0 < 361.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    43 ->     348.0 < 349.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    44 ->     337.0 < 348.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    46 ->     334.0 < 337.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    47 ->     331.0 < 334.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    48 ->     327.0 < 331.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration    49 ->     322.0 < 327.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 100
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   133 ->     319.0 < 322.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   159 ->     317.0 < 319.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   188 ->     314.0 < 317.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   209 ->     313.0 < 314.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 250
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 350
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 450
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   589 ->     312.0 < 313.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 650
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   681 ->     311.0 < 312.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 750
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   830 ->     304.0 < 311.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   831 ->     301.0 < 304.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration   838 ->     292.0 < 301.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 850
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 950
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1000
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1100
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1250
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1400
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1443 ->     288.0 < 292.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1445 ->     283.0 < 288.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1452 ->     282.0 < 283.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1500
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1650
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1750
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1762 ->     259.0 < 282.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1764 ->     257.0 < 259.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1766 ->     250.0 < 257.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1774 ->     245.0 < 250.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1778 ->     242.0 < 245.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1779 ->     237.0 < 242.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - !!! New best at iteration  1793 ->     236.0 < 237.0     | Rest days = 0
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 1850
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2050
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2200
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2400
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2500
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2700
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 2800
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 3000
+2026-02-27 16:28:25 - INFO - Perturbating schedule at iteration 3100
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3150
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3300
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3450
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3550
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3600
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3700
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 3850
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4000
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4100
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4200
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4450
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4600
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4750
+2026-02-27 16:28:26 - INFO - Perturbating schedule at iteration 4950
+2026-02-27 16:28:26 - INFO - Completed scheduling
+2026-02-27 16:28:27 - INFO - Stored running minimum cost plot
+2026-02-27 16:28:27 - INFO - Stored calendar
+2026-02-27 16:28:27 - INFO - Gathered validation info
+2026-02-27 16:28:28 - INFO - Stored rest days plot
+2026-02-27 16:28:28 - INFO - PROCESSING LEAGUE > LEAGUE B
+2026-02-27 16:28:28 - INFO - Read and parsed input data
+2026-02-27 16:28:28 - INFO - Phase 1: Construction
+2026-02-27 16:28:28 - INFO - Initialized schedule using method 1 with cost 1331.0
+2026-02-27 16:28:28 - INFO - Initialized schedule using method 2 with cost 3373.0
+2026-02-27 16:28:28 - INFO - Comparing costs 1331.0 vs. 3373.0
+2026-02-27 16:28:28 - INFO - Initialization method 1 is best
+2026-02-27 16:28:28 - INFO - Phase 2: Tabu & perturbation
+2026-02-27 16:28:28 - INFO - Tabu phase starts with cost 1331.0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    15 ->     994.0 < 1331.0    | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    20 ->     985.0 < 994.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    26 ->     984.0 < 985.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    27 ->     981.0 < 984.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    28 ->     976.0 < 981.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 50
+2026-02-27 16:28:28 - INFO - !!! New best at iteration    65 ->     902.0 < 976.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   107 ->     891.0 < 902.0     | Rest days = 1
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   126 ->     391.0 < 891.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   139 ->     388.0 < 391.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   163 ->     373.0 < 388.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   165 ->     371.0 < 373.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   168 ->     368.0 < 371.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - !!! New best at iteration   170 ->     366.0 < 368.0     | Rest days = 0
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 250
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 400
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 500
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 600
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 750
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 900
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1000
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1150
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1200
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1450
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1650
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1850
+2026-02-27 16:28:28 - INFO - Perturbating schedule at iteration 1950
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2100
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2250
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2350
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2450
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2550
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2700
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 2800
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3000
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3100
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3200
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3300
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3400
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3550
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3650
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3750
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3900
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 3950
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4000
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4100
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4200
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4400
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4650
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 4850
+2026-02-27 16:28:29 - INFO - Perturbating schedule at iteration 5000
+2026-02-27 16:28:29 - INFO - Completed scheduling
+2026-02-27 16:28:30 - INFO - Stored running minimum cost plot
+2026-02-27 16:28:30 - INFO - Stored calendar
+2026-02-27 16:28:30 - INFO - Gathered validation info
+2026-02-27 16:28:31 - INFO - Stored rest days plot

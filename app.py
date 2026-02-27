@@ -1,3 +1,4 @@
+import io
 from datetime import datetime
 from time import time
 
@@ -6,10 +7,38 @@ import streamlit as st
 
 from leaguescheduler import InputParser, LeagueScheduler, SchedulerParams
 from leaguescheduler.constants import MAX_ALLOWED_REST_DAYS, OUTPUT_COLS
-from leaguescheduler.utils import download_output, gather_stats
+from leaguescheduler.utils import gather_stats
 
 DEFAULTS = SchedulerParams()
 SHOW_TOP = False
+
+
+def download_output(
+    output_sch: dict,
+    output_tea: dict,
+    output_unu: dict,
+    output_res: dict,
+    df_stats: pd.DataFrame,
+) -> io.BytesIO:
+    """Writes outputs to Excel file without storing it locally."""
+    file = io.BytesIO()
+    with pd.ExcelWriter(file, engine="xlsxwriter") as writer:
+        df_stats.to_excel(writer, sheet_name="overview", index=True)
+        for sheet in output_sch.keys():  # assumes keys of inputs match
+            # add schedule sheet and fix date format in Excel
+            output_sch[sheet].to_excel(writer, sheet_name=sheet, index=False)
+
+            workbook = writer.book
+            date_format = workbook.add_format({"num_format": "dd/mm/yyyy"})
+            writer.sheets[sheet].set_column(0, 0, None, date_format)
+
+            # add other sheets
+            output_tea[sheet].to_excel(writer, sheet_name=f"{sheet}_teams", index=True)
+            output_unu[sheet].to_excel(writer, sheet_name=f"{sheet}_unused", index=True)
+            output_res[sheet].to_excel(writer, sheet_name=f"{sheet}_rest", index=True)
+    file.seek(0)
+    return file
+
 
 st.set_page_config(page_title="League Scheduler", page_icon="⚽📅", layout="wide")
 
@@ -32,7 +61,7 @@ with main_col1:
     st.markdown("**Input file**")
 
     st.info(
-        "One league per sheet, use **NIET** for unavailability ([example](https://github.com/sborms/leaguescheduler/blob/main/example_input.xlsx))",
+        "One league per sheet, use **NIET** for unavailability ([example](https://github.com/sborms/leaguescheduler/blob/main/example/input.xlsx))",
         icon="ℹ️",
     )
 

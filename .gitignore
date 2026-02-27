@@ -1,7 +1,6 @@
 # Other
-_old/
+.ruff_cache/
 experiments/
-spielerei.ipynb
 profile.out
 
 # Byte-compiled / optimized / DLL files
