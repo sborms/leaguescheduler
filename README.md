@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/leaguescheduler)](https://pypi.org/project/leaguescheduler/)
 [![Python](https://img.shields.io/pypi/pyversions/leaguescheduler)](https://pypi.org/project/leaguescheduler/)
-[![CI](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yml)
+[![CI](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yaml/badge.svg)](https://github.com/sborms/leaguescheduler/actions/workflows/ci.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://leaguescheduler.streamlit.app)
 
@@ -73,6 +73,30 @@ Alternatively, you can execute `make example` which runs the above example.
 
 See `2rr --help` (and the research paper mentioned at the top) for more information about all the available arguments.
 
+<details>
+<summary><b>CLI reference</b></summary>
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--input-file` | text | *required* | Input Excel file with for every team their (un)availability data |
+| `--output-folder` | text | *required* | Folder where the outputs (logs, overview, schedules) will be stored |
+| `--seed` | integer | `None` | Optional seed for `np.random.seed()` |
+| `--unavailable` | text | `NIET` | Cell value to indicate that a team is unavailable |
+| `--clip-bot` | integer | `1` | Value for clipping rest days plot on low end |
+| `--clip-upp` | integer | `41` | Value for clipping rest days plot on high end |
+| `--net / --no-net` | flag | `--no-net` | Report the adjusted number of rest days |
+| `--tabu-length` | integer | `4` | Number of iterations during which a team cannot be selected |
+| `--perturbation-length` | integer | `50` | Check perturbation need every this many iterations |
+| `--n-iterations` | integer | `10000` | Number of tabu phase iterations |
+| `--m` | integer | `7` | Minimum number of time slots between 2 games with same pair of teams |
+| `--p` | integer | `1000` | Cost from dummy supply node q to non-dummy demand node |
+| `--r-max` | integer | `4` | Minimum required time slots for 2 games of same team |
+| `--alpha` | float | `0.5` | Probability of picking perturbation operator 1 |
+| `--beta` | float | `0.01` | Probability of removing a game in operator 1 |
+| `--cost-excessive-rest-days` | float | `500` | Cost for excessive rest days |
+
+</details>
+
 #### Classes
 
 To more freely play around, you can import the core classes in your own Python script or notebook.
@@ -95,6 +119,30 @@ scheduler.store_calendar(df, file="out/calendar.xlsx")
 ```
 
 Type `help(LeagueScheduler)` to show the full documentation.
+
+<details>
+<summary><b>Python API reference</b></summary>
+
+**`InputParser(filename, unavailable="NIET")`** — Reads and parses input Excel file.
+
+**`SchedulerParams(...)`** — Configuration dataclass for the scheduler.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `tabu_length` | int | `4` | Iterations during which a team cannot be selected |
+| `perturbation_length` | int | `50` | Check perturbation need every this many iterations |
+| `n_iterations` | int | `10000` | Number of tabu phase iterations |
+| `m` | int | `7` | Min time slots between 2 games with same pair |
+| `p` | int | `1000` | Cost from dummy supply node to non-dummy demand node |
+| `r_max` | int | `4` | Min required time slots for 2 games of same team |
+| `penalties` | dict | `{}` | Custom penalty mapping for rest days |
+| `alpha` | float | `0.5` | Probability of picking perturbation operator 1 |
+| `beta` | float | `0.01` | Probability of removing a game in operator 1 |
+| `cost_excessive_rest_days` | float | `500` | Cost for excessive rest days |
+
+**`LeagueScheduler(input, params=SchedulerParams(), logger=None)`** — Main scheduler class.
+
+</details>
 
 #### Web application
 
