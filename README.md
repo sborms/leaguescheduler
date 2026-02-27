@@ -23,7 +23,7 @@ uv venv
 uv pip install -e .
 ```
 
-Make sure to stay in the correct environment once installed, or else use `uv run ...` for commands.
+Make sure to stay in the correct environment once installed, or just use `uv run ...` for commands.
 
 ## Usage
 
@@ -96,16 +96,19 @@ If the app happens to be sleeping due to inactivity 😴, just wake it back up. 
 
 How long does the scheduler take? This table sheds some baseline light:
 
-|                  | 4-13 teams |
+|                  | 13 teams   |
 |------------------|----------- |
-| 10 iterations    | ~2s        |
-| 100 iterations   | ~3s        |
-| 1000 iterations  | ~10s       |
-| 10000 iterations | ~85s       |
+| 10   iterations  | <1s        |
+| 100  iterations  | <1s        |
+| 1k   iterations  | <1s        |
+| 10k  iterations  | ~8s        |
+| 100k iterations  | ~75s       |
 
 _Run on a few years old Windows 10 Pro machine with Intel i7–7700HQ CPU and 32GB RAM._
 
 A few 100(0)s iterations are typically sufficient to arrive at a good schedule.
+
+Quite fast. Thanks to Ra-Ra-Rust! 🦀
 
 ## Feedback?
 

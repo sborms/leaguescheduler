@@ -7,10 +7,10 @@ use ordered_float::OrderedFloat;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 
-// ─── Constants (must match Python constants.py) ──────────────────────────────
-const DISALLOWED_NBR: f64 = 9_999_999.0;
-const LARGE_NBR: f64 = 9999.0;
+// ─── Constants ───────────────────────────────────────────────────────────────
+const DISALLOWED_NBR: f64 = 9_999_999.0; // positive if minimization, negative if maximization
 const DISALLOWED_REPLACE: f64 = 1e15;
+const LARGE_NBR: f64 = 9999.0; // must match Python constants.py
 
 // ─── Hungarian algorithm (Kuhn-Munkres) ──────────────────────────────────────
 // Courtesy to https://github.com/neka-nat/fastmunk for main implementation
@@ -109,7 +109,7 @@ fn kuhn_munkres(weights: ArrayView2<f64>, maximize: bool) -> Vec<(usize, usize)>
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
 
-/// Equivalent of Python _get_team_array: concatenate X[idx,:] and X[:,idx], filter out LARGE_NBR.
+/// Equivalent of Python legacy _get_team_array(): concatenate X[idx,:] and X[:,idx], filter out LARGE_NBR.
 #[inline]
 fn get_team_array(x: &ArrayView2<f64>, idx: usize) -> Vec<f64> {
     let n = x.nrows();
@@ -296,8 +296,17 @@ fn solve_inner(
     let dim = n_home + n_oppo;
 
     // construct cost matrix
-    let am_cost =
-        create_cost_matrix_inner(x, team_idx, set_home, opponents, sets_forbidden, m, r_max, penalties, max_penalty_key);
+    let am_cost = create_cost_matrix_inner(
+        x,
+        team_idx,
+        set_home,
+        opponents,
+        sets_forbidden,
+        m,
+        r_max,
+        penalties,
+        max_penalty_key,
+    );
 
     // construct full adjacency matrix:
     // [ am_cost  |  zeros ]
@@ -311,7 +320,11 @@ fn solve_inner(
         for j in 0..n_oppo {
             let v = am_cost[(i, j)];
             // replace disallowed values with a large number
-            am[(i, j)] = if v == DISALLOWED_NBR { DISALLOWED_REPLACE } else { v };
+            am[(i, j)] = if v == DISALLOWED_NBR {
+                DISALLOWED_REPLACE
+            } else {
+                v
+            };
         }
     }
 
@@ -333,11 +346,7 @@ fn solve_inner(
     let mut indexes_inv: Vec<(usize, f64)> = Vec::with_capacity(n_oppo);
     for &(k, v) in &indexes {
         if v < n_oppo {
-            let slot = if k < n_home {
-                set_home[k]
-            } else {
-                f64::NAN
-            };
+            let slot = if k < n_home { set_home[k] } else { f64::NAN };
             indexes_inv.push((opponents[v], slot));
         }
     }

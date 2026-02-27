@@ -1,6 +1,3 @@
-# NOTE: Should be large enough (positive if minimization, negative if maximization)
-DISALLOWED_NBR = 9999999.0
-
 # NOTE: Should be large enough to avoid overlap with any possible time slot (difference)
 LARGE_NBR = 9999
 
